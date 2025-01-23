@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/loginTabFragment">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.example.cab_approval_system.ui.home.HomeFragment"
+        android:label="@string/Home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/navigation_history"
+        android:name="com.example.cab_approval_system.ui.history.HistoryFragment"
+        android:label="History"
+        tools:layout="@layout/fragment_history" />
+
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.example.cab_approval_system.ui.profile.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/loginTabFragment"
+        android:name="com.example.cab_approval_system.LoginTabFragment"
+        android:label="fragment_login_tab"
+        tools:layout="@layout/fragment_login_tab" >
+        <action
+            android:id="@+id/action_loginTabFragment_to_navigation_home"
+            app:destination="@id/navigation_home" />
+    </fragment>
+</navigation>

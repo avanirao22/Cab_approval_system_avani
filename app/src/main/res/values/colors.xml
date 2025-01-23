@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="text_color">#FF000000</color>
+    <color name="backgroud_color">#FFFFFFFF</color>
+    <color name="action_bar_color">#0F032A</color> <!-- Replace with your preferred color -->
+    <color name="action_bar_dark">#070F42</color> <!-- For status bar -->
+    <color name="border_color">#D1D3D9</color>
+    <!-- Light Theme Colors -->
+    <color name="background_light">#FFFFFFFF</color>
+    <color name="text_light">#FF000000</color>
+    <color name="primary_light">#6200EE</color>
+    <color name="title_color">#06054B</color>
+    <color name="secondary_light">#03DAC6</color>
+    <color name="secondary_light_variant">#018786</color>
+    <color name="hint_color">#808080</color>
+    <color name="link_color">#1E88E5</color>
+    <color name="semi_transparent_white">#CCFFFFFF</color>
+    <color name="main_color">#275F55</color>
+    <color name="semi_transparent_color">#B2E9E4E4</color>
+
+    <!-- Dark Theme Colors -->
+    <color name="background_dark">#FF121212</color>
+    <color name="text_dark">#FFFFFFFF</color>
+    <color name="primary_dark">#BB86FC</color>
+    <color name="primary_dark_variant">#3700B3</color>
+    <color name="secondary_dark">#03DAC6</color>
+    <color name="secondary_dark_variant">#03DAC6</color>
+
+
+</resources>

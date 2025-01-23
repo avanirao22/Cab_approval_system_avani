@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "790588806507",
+    "project_id": "cab-approval-system",
+    "storage_bucket": "cab-approval-system.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:790588806507:android:5dde851ea8218c5b77a82e",
+        "android_client_info": {
+          "package_name": "com.example.cab_approval_system"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqg90WoQVPV3VtdL2k06CC3FKrK-YvcuQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

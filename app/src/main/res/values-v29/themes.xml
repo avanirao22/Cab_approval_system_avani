@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Base.Theme.Cab_approval_system" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Customize your base theme here -->
+        <!--primary color band-->
+        <item name="colorPrimary">@color/main_color</item> <!-- Action Bar color -->
+        <item name="colorPrimaryVariant">@color/main_color</item>
+        <item name="colorOnPrimary">@color/backgroud_color</item>
+
+        <!--secondry color band-->
+        <item name="colorSecondary">@color/secondary_light</item>
+        <item name="colorSecondaryVariant">@color/secondary_light_variant</item>
+        <item name="colorOnSecondary">@color/text_color</item>
+
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="windowActionBar">true</item> <!-- Enable Action Bar -->
+
+        <item name="android:forceDarkAllowed">false</item>
+
+    </style>
+</resources>

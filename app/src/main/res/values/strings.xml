@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">Cab_approval_system</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_home">Home</string>
+    <string name="Home">Home</string>
+    <string name="History">History</string>
+    <string name="Profile">Profile</string>
+    <string name="home">Home</string>
+    <string name="pending_approvals">Pending approvals</string>
+    <string name="requesting_ride">Requesting Ride</string>
+    <string name="sending_cab_details_as_per_requested">Sending cab details as per requested</string>
+    <string name="welcome">Welcome</string>
+    <string name="emp_name">Emp Name</string>
+    <string name="comma">,</string>
+    <string name="emp_team">Emp Team</string>
+    <string name="emp_id">Emp ID</string>
+    <string name="pick_up">Pick Up</string>
+    <string name="destination">Destination</string>
+    <string name="time_picker">Time Picker</string>
+    <string name="drop_off">Drop Off</string>
+    <string name="time">Time</string>
+    <string name="date">Date</string>
+    <string name="project">Project</string>
+    <string name="date_picker">Date_picker</string>
+    <string name="number_of_people_for_ride">Number of people for ride</string>
+    <string name="enter_time">Enter time</string>
+    <string name="number_of_passenger">Number of Passenger</string>
+    <string name="distance">Distance</string>
+    <string name="select">Select</string>
+    <string name="change">Change</string>
+    <string name="designation">Designation</string>
+    <string name="enter_date">Enter Date</string>
+    <string-array name="purpose_array">
+        <item> Platform Project</item>
+        <item> Customer Project</item>
+    </string-array>
+    <string-array name="designation_array">
+        <item> Employee </item>
+        <item> Intern </item>
+        <item> Contract </item>
+    </string-array>
+</resources>
