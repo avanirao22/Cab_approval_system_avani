@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import  android.widget.Toast;
 import android.widget.ImageButton;
@@ -36,24 +37,38 @@ public class Home_page extends AppCompatActivity {
 
         Intent intent = getIntent();
         String passedEmail = intent.getStringExtra("email");
+        String userRole = getIntent().getStringExtra("userRole");
 
         databaseReference = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
                 .getReference("Sheet1");
 
         fetchUserData(passedEmail);
 
+        if ("Employee".equals(userRole)) {
+            // Only request button visible for employees
+            pending_approvals.setVisibility(View.GONE);
+            cab_request.setVisibility(View.GONE);
+        } else if ("HR Head".equals(userRole) || "FH".equals(userRole)) {
+            // Show both request and pending approvals for HR and Functional Heads
+            pending_approvals.setVisibility(View.VISIBLE);
+            cab_request.setVisibility(View.GONE);
+        }
+
         request_ride.setOnClickListener(v->{
             Intent i = new Intent(Home_page.this, Request_ride.class);
+            i.putExtra("email", passedEmail);
             startActivity(i);
         });
 
         pending_approvals.setOnClickListener(v->{
             Intent i = new Intent(Home_page.this, Pending_approvals.class);
+            i.putExtra("email", passedEmail);
             startActivity(i);
         });
 
         cab_request.setOnClickListener(v->{
             Intent i = new Intent(Home_page.this, Cab_request.class);
+            i.putExtra("email", passedEmail);
             startActivity(i);
         });
     }

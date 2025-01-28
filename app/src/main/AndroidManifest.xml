@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- Specify the use of telephony features -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-feature
         android:name="android.hardware.telephony"
         android:required="false" />

@@ -149,9 +149,12 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal">
 
             <!-- First Image Button -->
+
+            <!-- Second Image Button -->
             <ImageButton
                 android:id="@+id/request_ride"
                 android:layout_width="100dp"
@@ -162,7 +165,6 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/request_ride_icon" />
 
-            <!-- Second Image Button -->
             <ImageButton
                 android:id="@+id/pending_approvals"
                 android:layout_width="100dp"

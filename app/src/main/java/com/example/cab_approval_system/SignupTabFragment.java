@@ -171,6 +171,8 @@ public class SignupTabFragment extends Fragment {
                 .setValue(employee)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(getContext(), "Registration saved!", Toast.LENGTH_SHORT).show();
+
+                    clearInputFields();
                     // Ensure visibility update happens on the main thread
                     if (getActivity() != null) {
                         getActivity().runOnUiThread(() -> loginPageLink.setVisibility(View.VISIBLE));
@@ -179,5 +181,18 @@ public class SignupTabFragment extends Fragment {
                 .addOnFailureListener(e -> {
                     Toast.makeText(getContext(), "Failed to save registration: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
+    }
+    private void clearInputFields() {
+        EditText employeeIdField = requireView().findViewById(R.id.signup_emp_id);
+        EditText nameField = requireView().findViewById(R.id.signup_name);
+        EditText emailField = requireView().findViewById(R.id.signup_email);
+        EditText passwordField = requireView().findViewById(R.id.signup_password);
+        EditText confirmPasswordField = requireView().findViewById(R.id.signup_confirm);
+
+        employeeIdField.setText("");
+        nameField.setText("");
+        emailField.setText("");
+        passwordField.setText("");
+        confirmPasswordField.setText("");
     }
 }
