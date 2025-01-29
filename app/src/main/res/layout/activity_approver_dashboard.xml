@@ -1,0 +1,28 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!-- Pending Requests Button -->
+    <ImageButton
+        android:id="@+id/pending_requests_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_notification"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <!-- Notification Dot -->
+    <View
+        android:id="@+id/notification_dot"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:background="@drawable/ic_notification"
+        android:visibility="gone"
+        android:layout_alignTop="@id/pending_requests_button"
+        android:layout_alignEnd="@id/pending_requests_button"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp" />
+</RelativeLayout>

@@ -17,7 +17,7 @@
     <color name="semi_transparent_white">#CCFFFFFF</color>
     <color name="main_color">#275F55</color>
     <color name="semi_transparent_color">#B2E9E4E4</color>
-
+    <color name="red">#B2F80404</color>
     <!-- Dark Theme Colors -->
     <color name="background_dark">#FF121212</color>
     <color name="text_dark">#FFFFFFFF</color>
