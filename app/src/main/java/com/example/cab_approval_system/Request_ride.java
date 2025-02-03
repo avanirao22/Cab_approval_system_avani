@@ -212,18 +212,18 @@ public class Request_ride extends AppCompatActivity {
         });
     }
 
-
-    private void fetchApproverToken(String approverEmail, OnApproverTokenFetchedListener listener) {
+    private void fetchApproverToken(String approverEmail, OnTokenFetchedListener listener) {
         DatabaseReference usersRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
-                .getReference("Registration_data"); // Firebase table containing user tokens
+                .getReference("Registration_data");  // Assuming you have a 'Users' table where the FCM token is stored
+
         usersRef.orderByChild("email").equalTo(approverEmail).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String token = null;
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    token = snapshot.child("fcm_token").getValue(String.class); // Adjust according to your schema
+                    token = snapshot.child("fcm_token").getValue(String.class);
                 }
-                listener.onApproverTokenFetched(token);
+                listener.onTokenFetched(token);
             }
 
             @Override
@@ -233,49 +233,46 @@ public class Request_ride extends AppCompatActivity {
         });
     }
 
+    public interface OnTokenFetchedListener {
+        void onTokenFetched(String token);
+    }
+
     private void sendFCMNotification(int requestId, String token) {
-
         String message = "A new ride request has been submitted with ID: " + requestId;
-
+        // Send notification via FCM (Actual FCM logic should be added here)
+        Log.d("FCM", "Sending notification to token: " + token + " with message: " + message);
     }
 
     private void saveNotificationData(int requestId, String approverEmail) {
-        if (approverEmail == null || approverEmail.isEmpty()) {
-            Toast.makeText(Request_ride.this, "Approver email is empty, cannot send notification.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         DatabaseReference notificationRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
-                .getReference("Notification"); // Ensure correct table name
+                .getReference("Notification");
 
+        String message = "A new ride request has been submitted with ID: " + requestId;
         Map<String, Object> notificationData = new HashMap<>();
-        notificationData.put("approver_id", approverEmail);
-        notificationData.put("message", "A new ride request has been submitted with ID: " + requestId);
+        notificationData.put("approver_email", approverEmail);
+        notificationData.put("message", message);
         notificationData.put("request_id", requestId);
-        notificationData.put("status", "unread");
+        notificationData.put("status", "pending");
         notificationData.put("timestamp", System.currentTimeMillis());
-        notificationData.put("title", "New Ride Request");
+        notificationData.put("title", "Ride Request Pending");
 
         notificationRef.push().setValue(notificationData)
-                .addOnSuccessListener(aVoid -> Toast.makeText(Request_ride.this, "Notification sent to approver.", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Toast.makeText(Request_ride.this, "Failed to send notification: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                .addOnSuccessListener(aVoid -> Log.d("Notification", "Notification saved successfully"))
+                .addOnFailureListener(e -> Log.e("Notification", "Failed to save notification: " + e.getMessage()));
     }
 
-
-    public interface OnApproverTokenFetchedListener {
-        void onApproverTokenFetched(String token);
-    }
-    private void fetchApproverEmail(String employeeEmail, OnApproverEmailFetchedListener listener) {
-        DatabaseReference employeesRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
+    private void fetchApproverEmail(String employeeEmail, OnApproverFetchedListener listener) {
+        DatabaseReference usersRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
                 .getReference("Sheet1");
-        employeesRef.orderByChild("Officail Email ID").equalTo(employeeEmail).addListenerForSingleValueEvent(new ValueEventListener() {
+
+        usersRef.orderByChild("Official Email ID").equalTo(employeeEmail).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String approverEmail = null;
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     approverEmail = snapshot.child("Email ID of Approver").getValue(String.class);
                 }
-                listener.onApproverEmailFetched(approverEmail);
+                listener.onApproverFetched(approverEmail);
             }
 
             @Override
@@ -285,8 +282,8 @@ public class Request_ride extends AppCompatActivity {
         });
     }
 
-    public interface OnApproverEmailFetchedListener {
-        void onApproverEmailFetched(String approverEmail);
+    public interface OnApproverFetchedListener {
+        void onApproverFetched(String approverEmail);
     }
 
     private void clearFields() {

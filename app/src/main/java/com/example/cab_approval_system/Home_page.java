@@ -120,13 +120,13 @@ public class Home_page extends AppCompatActivity {
     private void checkForUnreadNotifications(String approverEmail) {
         DatabaseReference notificationsRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
                 .getReference("Notification");
-        notificationsRef.orderByChild("approver_id").equalTo(approverEmail).addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
+        notificationsRef.orderByChild("approver_email").equalTo(approverEmail).addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 boolean hasUnreadNotifications = false;
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String status = snapshot.child("status").getValue(String.class);
-                    if ("unread".equals(status)) {
+                    if ("pending".equals(status)) {
                         hasUnreadNotifications = true;
                         break;
                     }
