@@ -18,13 +18,16 @@ public class Home_page extends AppCompatActivity {
 
     private TextView emp_Name, empID, empTeam;
     private DatabaseReference databaseReference;
-    private ImageView notificationDot;  // Add an ImageView for notification dot
+    private ImageView notificationDot;// Add an ImageView for notification dot
+    private String user_email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
-        Home_Screen.setupBottomNavigation(this);
+
+        user_email =  getIntent().getStringExtra("email");
+        Home_Screen.setupBottomNavigation(this,user_email);
 
         emp_Name = findViewById(R.id.emp_name_fetch);
         empID = findViewById(R.id.emp_id_edit_text);

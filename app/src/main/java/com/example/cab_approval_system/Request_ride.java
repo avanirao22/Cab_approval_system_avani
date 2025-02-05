@@ -37,6 +37,7 @@ public class Request_ride extends AppCompatActivity {
     private Button request_button;
     private EditText pickup, dropoff;
     private Spinner project_spinner;
+    private String email_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,7 +158,7 @@ public class Request_ride extends AppCompatActivity {
             String date = date_selected.getText().toString();
             String project = project_spinner.getSelectedItem().toString();
             String count = num_of_riders_edit_text.getText().toString();
-            String email_id = getIntent().getStringExtra("email");
+            email_id = getIntent().getStringExtra("email");
 
             if (distanceObtained.isEmpty() || time.isEmpty() || date.isEmpty() || project.isEmpty() || count.isEmpty()) {
                 Toast.makeText(Request_ride.this, "All fields need to be filled", Toast.LENGTH_SHORT).show();
@@ -255,6 +256,7 @@ public class Request_ride extends AppCompatActivity {
         notificationData.put("status", "pending");
         notificationData.put("timestamp", System.currentTimeMillis());
         notificationData.put("title", "Ride Request Pending");
+        notificationData.put("requester_email",email_id);
 
         notificationRef.push().setValue(notificationData)
                 .addOnSuccessListener(aVoid -> Log.d("Notification", "Notification saved successfully"))

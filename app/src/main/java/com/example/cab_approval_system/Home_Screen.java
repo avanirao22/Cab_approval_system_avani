@@ -7,6 +7,7 @@ import android.widget.ImageButton;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class Home_Screen extends AppCompatActivity {
+    private String user_email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -14,11 +15,12 @@ public class Home_Screen extends AppCompatActivity {
         setContentView(R.layout.activity_home_screen);
 
         // Call the helper method to set up the bottom navigation buttons
-        setupBottomNavigation(this);
+        user_email = getIntent().getStringExtra("email");
+        setupBottomNavigation(this,user_email);
     }
 
     // This method sets up the bottom navigation buttons and their click listeners
-    public static void setupBottomNavigation(Context context) {
+    public static void setupBottomNavigation(Context context, String user_email) {
         // Initialize the ImageButtons with context
         ImageButton homeImageBtn = ((AppCompatActivity) context).findViewById(R.id.home_image_button);
         ImageButton historyImageBtn = ((AppCompatActivity) context).findViewById(R.id.history_image_button);
@@ -28,18 +30,21 @@ public class Home_Screen extends AppCompatActivity {
         homeImageBtn.setOnClickListener(v -> {
             // Navigate to Home page
             Intent intent = new Intent(context, Home_page.class);
+            intent.putExtra("email",user_email);
             context.startActivity(intent);
         });
 
         historyImageBtn.setOnClickListener(v -> {
             // Navigate to History page
             Intent intent = new Intent(context, History_page.class);
+            intent.putExtra("email",user_email);
             context.startActivity(intent);
         });
 
         profileImageBtn.setOnClickListener(v -> {
             // Navigate to Profile page
             Intent intent = new Intent(context, Profile_page.class);
+            intent.putExtra("email",user_email);
             context.startActivity(intent);
         });
     }
