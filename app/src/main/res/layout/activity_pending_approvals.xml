@@ -1,105 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Pending_approvals">
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <LinearLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/pending_approvals_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="20dp">
+        android:clipToPadding="false"
+        android:padding="10dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-        <TextView
-            android:id="@+id/name_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Name"
-            android:layout_marginTop="10dp"
-            android:textSize="20dp"/>
-
-        <TextView
-            android:id="@+id/emp_id_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Emp ID"
-            android:textSize="20dp"
-            android:layout_marginTop="10dp"/>
-
-        <TextView
-            android:id="@+id/emp_emailid_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Email ID"
-            android:textSize="20dp"
-            android:layout_marginTop="10dp"/>
-
-        <TextView
-            android:id="@+id/source_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Pick-up point"
-            android:textSize="20dp"
-            android:layout_marginTop="10dp"/>
-
-        <TextView
-            android:id="@+id/destination_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Drop-off"
-            android:textSize="20dp"
-            android:layout_marginTop="10dp"/>
-
-        <TextView
-            android:id="@+id/date_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Date"
-            android:textSize="20dp"
-            android:layout_marginTop="10dp"/>
-
-        <TextView
-            android:id="@+id/distance_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Distance"
-            android:textSize="20dp"
-            android:layout_marginTop="10dp"/>
-
-        <TextView
-            android:id="@+id/project_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Project"
-            android:textSize="20dp"
-            android:layout_marginTop="10dp"/>
-
-        <TextView
-            android:id="@+id/time_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Time"
-            android:textSize="20dp"
-            android:layout_marginTop="10dp"/>
-
-        <TextView
-            android:id="@+id/status_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Status"
-            android:textSize="20dp"
-            android:layout_marginTop="10dp"/>
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/approve_chip"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Approve"/>
-
-
-    </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

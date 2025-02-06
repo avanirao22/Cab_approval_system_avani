@@ -1,46 +1,44 @@
 package com.example.cab_approval_system;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.chip.Chip;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Pending_approvals extends AppCompatActivity {
 
-    private TextView emp_name, emp_email, emp_id, emp_pick_up, emp_drop_off, emp_date, emp_distance, emp_project, emp_time, emp_status;
-    private Chip approve_chip;
+    private RecyclerView recyclerView;
+    private Recycler_adapter recyclerAdapter;
+    private List<RequestModel> requestList;
+    private Map<String, RequestModel> requestMap;
     private DatabaseReference requestRef, notificationRef, sheetRef;
-    private String requesterEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pending_approvals);
 
-        emp_name = findViewById(R.id.name_textview);
-        emp_email = findViewById(R.id.emp_emailid_textview);
-        emp_id = findViewById(R.id.emp_id_textview);
-        emp_pick_up = findViewById(R.id.source_textview);
-        emp_drop_off = findViewById(R.id.destination_textview);
-        emp_date = findViewById(R.id.date_textview);
-        emp_distance = findViewById(R.id.distance_textview);
-        emp_project = findViewById(R.id.project_textview);
-        emp_time = findViewById(R.id.time_textview);
-        emp_status = findViewById(R.id.status_textview);
-        approve_chip = findViewById(R.id.approve_chip);
+        recyclerView = findViewById(R.id.pending_approvals_recyclerview);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        requestList = new ArrayList<>();
+        requestMap = new HashMap<>();
+        recyclerAdapter = new Recycler_adapter(this, requestList);
+        recyclerView.setAdapter(recyclerAdapter);
 
         requestRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
                 .getReference("Request_details");
@@ -49,56 +47,21 @@ public class Pending_approvals extends AppCompatActivity {
         sheetRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
                 .getReference("Sheet1");
 
-        fetchLatestPendingRequest();
-
-        approve_chip.setOnClickListener(v -> approveRequest(requesterEmail));
+        fetchPendingRequests();
     }
 
-    private void approveRequest(String email) {
-        if (email != null) {
-            HashMap<String, Object> updateStatus = new HashMap<>();
-            updateStatus.put("status", "Approved ✅");
-
-            notificationRef.orderByChild("requester_email").equalTo(email)
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            for (DataSnapshot requestSnapshot : snapshot.getChildren()) {
-                                requestSnapshot.getRef().updateChildren(updateStatus)
-                                        .addOnCompleteListener(task -> {
-                                            if (task.isSuccessful()) {
-                                                Toast.makeText(Pending_approvals.this, "Request approved successfully.", Toast.LENGTH_SHORT).show();
-                                                emp_status.setText("Approved ✅");
-                                                approve_chip.setVisibility(View.GONE);
-                                                emp_status.setVisibility(View.VISIBLE);
-                                            } else {
-                                                Toast.makeText(Pending_approvals.this, "Failed to approve request.", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            Toast.makeText(Pending_approvals.this, "Error updating status.", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        }
-    }
-
-    private void fetchLatestPendingRequest() {
+    private void fetchPendingRequests() {
         notificationRef.orderByChild("status").equalTo("pending")
-                .limitToFirst(1)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
                             for (DataSnapshot requestSnapshot : snapshot.getChildren()) {
-                                requesterEmail = requestSnapshot.child("requester_email").getValue(String.class);
-                                Log.d("PendingApprovals", "Requester Email: " + requesterEmail);
-                                if (requesterEmail != null) {
-                                    fetchRequestDetails(requesterEmail);
-                                    fetchEmployeeDetails(requesterEmail);
+                                Object requestIdObj = requestSnapshot.child("request_id").getValue();
+                                String requestId = requestIdObj != null ? String.valueOf(requestIdObj) : null;
+                                String requesterEmail = requestSnapshot.child("requester_email").getValue(String.class);
+                                if (requestId != null && requesterEmail != null && !requestMap.containsKey(requestId)) {
+                                    fetchRequestDetails(requestId, requesterEmail);
                                 }
                             }
                         } else {
@@ -113,23 +76,29 @@ public class Pending_approvals extends AppCompatActivity {
                 });
     }
 
-    private void fetchRequestDetails(String email) {
-        requestRef.orderByChild("email").equalTo(email)
+    private void fetchRequestDetails(String requestId, String requesterEmail) {
+        requestRef.child(requestId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
-                            for (DataSnapshot requestSnapshot : snapshot.getChildren()) {
-                                Log.d("PendingApprovals", "Request details found");
-                                emp_pick_up.setText(requestSnapshot.child("pickupLocation").getValue(String.class));
-                                emp_drop_off.setText(requestSnapshot.child("dropoffLocation").getValue(String.class));
-                                emp_date.setText(requestSnapshot.child("date").getValue(String.class));
-                                emp_distance.setText(requestSnapshot.child("distanceObtained").getValue(String.class));
-                                emp_project.setText(requestSnapshot.child("project").getValue(String.class));
-                                emp_time.setText(requestSnapshot.child("time").getValue(String.class));
-                            }
-                        } else {
-                            Toast.makeText(Pending_approvals.this, "Request details not found.", Toast.LENGTH_SHORT).show();
+                            RequestModel request = new RequestModel();
+                            request.setRequestId(requestId);
+                            request.setPickupLocation(snapshot.child("pickupLocation").getValue(String.class));
+                            request.setDropoffLocation(snapshot.child("dropoffLocation").getValue(String.class));
+                            request.setDate(snapshot.child("date").getValue(String.class));
+                            request.setDistance(snapshot.child("distanceObtained").getValue(String.class));
+                            request.setProject(snapshot.child("project").getValue(String.class));
+                            request.setTime(snapshot.child("time").getValue(String.class));
+                            request.setStatus(snapshot.child("status").getValue(String.class));
+
+                            requestMap.put(requestId, request);
+                            requestList.add(request);
+
+                            // Correct method call passing the RequestModel
+                            fetchEmployeeDetails(requesterEmail, request);
+
+                            recyclerAdapter.notifyDataSetChanged();
                         }
                     }
 
@@ -140,7 +109,7 @@ public class Pending_approvals extends AppCompatActivity {
                 });
     }
 
-    private void fetchEmployeeDetails(String email) {
+    private void fetchEmployeeDetails(String email, RequestModel request) {
         sheetRef.orderByChild("Official Email ID").equalTo(email)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -148,13 +117,15 @@ public class Pending_approvals extends AppCompatActivity {
                         if (snapshot.exists()) {
                             for (DataSnapshot data : snapshot.getChildren()) {
                                 String employeeName = data.child("Employee Name").getValue(String.class);
-                                long emp_Id = data.child("Emp ID").getValue(long.class);
-                                String empId = String.valueOf(emp_Id);
-                                String officialEmail = data.child("Official Email ID").getValue(String.class);
+                                Long emp_Id = data.child("Emp ID").getValue(Long.class);
+                                String empId = emp_Id != null ? String.valueOf(emp_Id) : "N/A";
 
-                                emp_name.setText(employeeName != null ? employeeName : "N/A");
-                                emp_id.setText(empId != null ? empId : "N/A");
-                                emp_email.setText(officialEmail != null ? officialEmail : "N/A");
+                                request.setEmpName(employeeName != null ? employeeName : "N/A");
+                                request.setEmpId(empId);
+                                request.setEmpEmail(email);
+
+                                recyclerAdapter.notifyDataSetChanged();
+                                break;
                             }
                         } else {
                             Toast.makeText(Pending_approvals.this, "Employee details not found.", Toast.LENGTH_SHORT).show();
@@ -167,4 +138,43 @@ public class Pending_approvals extends AppCompatActivity {
                     }
                 });
     }
+
+
+    private void updateNotificationStatus(String requestId, String requesterEmail) {
+        notificationRef.orderByChild("request_id").equalTo(requestId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        boolean recordFound = false;
+                        for (DataSnapshot requestSnapshot : snapshot.getChildren()) {
+                            String email = requestSnapshot.child("requester_email").getValue(String.class);
+
+                            // Check if the request_id and requester_email match
+                            if (email != null && email.equals(requesterEmail)) {
+                                requestSnapshot.getRef().child("status").setValue("approved")
+                                        .addOnCompleteListener(task -> {
+                                            if (task.isSuccessful()) {
+                                                Toast.makeText(Pending_approvals.this, "Notification updated successfully.", Toast.LENGTH_SHORT).show();
+                                            }
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Toast.makeText(Pending_approvals.this, "Failed to update notification status.", Toast.LENGTH_SHORT).show();
+                                        });
+                                recordFound = true;
+                                break;
+                            }
+                        }
+
+                        if (!recordFound) {
+                            Toast.makeText(Pending_approvals.this, "No matching record found for this request and email.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(Pending_approvals.this, "Error updating notification status.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
 }
