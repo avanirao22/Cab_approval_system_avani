@@ -162,35 +162,47 @@ public class SignupTabFragment extends Fragment {
     }
 
     private void saveRegistrationData(String employeeId, String name, String email, String password, TextView loginPageLink) {
-        // Fetch FCM token
-        FirebaseMessaging.getInstance().getToken()
+        // Check if the user is already registered in the Registration_data node
+        databaseReference.child(email.replace(".", ","))
+                .get()
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        String token = task.getResult();
-                        Map<String, Object> employee = new HashMap<>();
-                        employee.put("employeeId", Integer.parseInt(employeeId));
-                        employee.put("name", name);
-                        employee.put("email", email);
-                        employee.put("password", password);
-                        employee.put("fcm_token", token);  // Store the FCM token
-
-                        databaseReference.child(email.replace(".", ","))
-                                .setValue(employee)
-                                .addOnSuccessListener(aVoid -> {
-                                    Toast.makeText(getContext(), "Registration saved!", Toast.LENGTH_SHORT).show();
-                                    clearInputFields();
-                                    if (getActivity() != null) {
-                                        getActivity().runOnUiThread(() -> loginPageLink.setVisibility(View.VISIBLE));
-                                    }
-                                })
-                                .addOnFailureListener(e -> {
-                                    Toast.makeText(getContext(), "User already registered ", Toast.LENGTH_SHORT).show();
-                                });
+                    if (task.isSuccessful() && task.getResult().exists()) {
+                        // User already exists
+                        Toast.makeText(getContext(), "User already registered!", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(getContext(), "Failed to fetch FCM token!", Toast.LENGTH_SHORT).show();
+                        // Fetch FCM token and register new user
+                        FirebaseMessaging.getInstance().getToken()
+                                .addOnCompleteListener(tokenTask -> {
+                                    if (tokenTask.isSuccessful()) {
+                                        String token = tokenTask.getResult();
+                                        Map<String, Object> employee = new HashMap<>();
+                                        employee.put("employeeId", Integer.parseInt(employeeId));
+                                        employee.put("name", name);
+                                        employee.put("email", email);
+                                        employee.put("password", password);
+                                        employee.put("fcm_token", token);
+
+                                        // Save the new registration
+                                        databaseReference.child(email.replace(".", ","))
+                                                .setValue(employee)
+                                                .addOnSuccessListener(aVoid -> {
+                                                    Toast.makeText(getContext(), "Registration saved!", Toast.LENGTH_SHORT).show();
+                                                    clearInputFields();
+                                                    if (getActivity() != null) {
+                                                        getActivity().runOnUiThread(() -> loginPageLink.setVisibility(View.VISIBLE));
+                                                    }
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    Toast.makeText(getContext(), "Failed to register user!", Toast.LENGTH_SHORT).show();
+                                                });
+                                    } else {
+                                        Toast.makeText(getContext(), "Failed to fetch FCM token!", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                     }
                 });
     }
+
 
     private void clearInputFields() {
         EditText employeeIdField = requireView().findViewById(R.id.signup_emp_id);

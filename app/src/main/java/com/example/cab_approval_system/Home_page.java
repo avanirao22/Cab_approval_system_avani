@@ -77,6 +77,7 @@ public class Home_page extends AppCompatActivity {
         pending_approvals.setOnClickListener(v -> {
             Intent i = new Intent(Home_page.this, Pending_approvals.class);
             i.putExtra("email", passedEmail);
+            i.putExtra("userRole", userRole);
             startActivity(i);
         });
 
@@ -123,25 +124,29 @@ public class Home_page extends AppCompatActivity {
     private void checkForUnreadNotifications(String approverEmail) {
         DatabaseReference notificationsRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
                 .getReference("Notification");
-        notificationsRef.orderByChild("approver_email").equalTo(approverEmail).addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                boolean hasUnreadNotifications = false;
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String status = snapshot.child("status").getValue(String.class);
-                    if ("pending".equals(status)) {
-                        hasUnreadNotifications = true;
-                        break;
-                    }
-                }
-                // Show/hide notification dot based on unread notifications
-                notificationDot.setVisibility(hasUnreadNotifications ? View.VISIBLE : View.GONE);
-            }
 
-            @Override
-            public void onCancelled(com.google.firebase.database.DatabaseError databaseError) {
-                Toast.makeText(Home_page.this, "Failed to check notifications: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+        // Listen for real-time updates
+        notificationsRef.orderByChild("approver_email").equalTo(approverEmail)
+                .addValueEventListener(new com.google.firebase.database.ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        boolean hasUnreadNotifications = false;
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            String status = snapshot.child("status").getValue(String.class);
+                            if ("pending".equals(status)) {
+                                hasUnreadNotifications = true;
+                                break;
+                            }
+                        }
+                        // Show/hide notification dot based on unread notifications
+                        notificationDot.setVisibility(hasUnreadNotifications ? View.VISIBLE : View.GONE);
+                    }
+
+                    @Override
+                    public void onCancelled(com.google.firebase.database.DatabaseError databaseError) {
+                        Toast.makeText(Home_page.this, "Failed to check notifications: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
-    }
+
+}

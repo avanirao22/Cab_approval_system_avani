@@ -1,5 +1,6 @@
 package com.example.cab_approval_system;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -26,6 +27,7 @@ public class Pending_approvals extends AppCompatActivity {
     private List<RequestModel> requestList;
     private Map<String, RequestModel> requestMap;
     private DatabaseReference requestRef, notificationRef, sheetRef;
+    private String approverEmail,passedEmail,userRole;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,15 @@ public class Pending_approvals extends AppCompatActivity {
         recyclerAdapter = new Recycler_adapter(this, requestList);
         recyclerView.setAdapter(recyclerAdapter);
 
+        // Get passed data (email and role)
+        Intent intent = getIntent();
+        String passedEmail = intent.getStringExtra("email");
+        String userRole = intent.getStringExtra("userRole");
+
+        if ("HR Head".equals(userRole) || "FH".equals(userRole)) {
+         approverEmail =passedEmail;
+        }
+
         requestRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
                 .getReference("Request_details");
         notificationRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
@@ -51,7 +62,7 @@ public class Pending_approvals extends AppCompatActivity {
     }
 
     private void fetchPendingRequests() {
-        notificationRef.orderByChild("status").equalTo("pending")
+        notificationRef.orderByChild("approver_email").equalTo(approverEmail) // Filter by approver's email
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -75,6 +86,7 @@ public class Pending_approvals extends AppCompatActivity {
                     }
                 });
     }
+
 
     private void fetchRequestDetails(String requestId, String requesterEmail) {
         requestRef.child(requestId)
