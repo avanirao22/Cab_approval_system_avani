@@ -48,7 +48,7 @@ public class Pending_approvals extends AppCompatActivity {
         String userRole = intent.getStringExtra("userRole");
 
         if ("HR Head".equals(userRole) || "FH".equals(userRole)) {
-         approverEmail =passedEmail;
+            approverEmail =passedEmail;
         }
 
         requestRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
