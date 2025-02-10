@@ -24,8 +24,11 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class Request_ride extends AppCompatActivity {
@@ -248,13 +251,17 @@ public class Request_ride extends AppCompatActivity {
         DatabaseReference notificationRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
                 .getReference("Notification");
 
+        long currentTimeMillis = System.currentTimeMillis();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
+        String formattedTime = sdf.format(new Date(currentTimeMillis));
+
         String message = "A new ride request has been submitted with ID: " + requestId;
         Map<String, Object> notificationData = new HashMap<>();
         notificationData.put("approver_email", approverEmail);
         notificationData.put("message", message);
         notificationData.put("request_id", requestId);
         notificationData.put("status", "pending");
-        notificationData.put("timestamp", System.currentTimeMillis());
+        notificationData.put("timestamp", formattedTime);
         notificationData.put("title", "Ride Request Pending");
         notificationData.put("requester_email",email_id);
 

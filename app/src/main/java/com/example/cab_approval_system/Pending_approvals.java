@@ -37,11 +37,6 @@ public class Pending_approvals extends AppCompatActivity {
         recyclerView = findViewById(R.id.pending_approvals_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        requestList = new ArrayList<>();
-        requestMap = new HashMap<>();
-        recyclerAdapter = new Recycler_adapter(this, requestList);
-        recyclerView.setAdapter(recyclerAdapter);
-
         // Get passed data (email and role)
         Intent intent = getIntent();
         String passedEmail = intent.getStringExtra("email");
@@ -50,6 +45,11 @@ public class Pending_approvals extends AppCompatActivity {
         if ("HR Head".equals(userRole) || "FH".equals(userRole)) {
             approverEmail =passedEmail;
         }
+
+        requestList = new ArrayList<>();
+        requestMap = new HashMap<>();
+        recyclerAdapter = new Recycler_adapter(this, requestList,approverEmail);
+        recyclerView.setAdapter(recyclerAdapter);
 
         requestRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
                 .getReference("Request_details");
