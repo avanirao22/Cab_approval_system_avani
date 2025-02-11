@@ -31,6 +31,13 @@
     <string name="change">Change</string>
     <string name="designation">Designation</string>
     <string name="enter_date">Enter Date</string>
+    <string name="employee_email_id">Employee Email ID :</string>
+    <string name="employee_name">Employee Name :</string>
+    <string name="email_id">Email ID:</string>
+    <string name="source">Source :</string>
+    <string name="pick_up_point">Pick-up point:</string>
+    <string name="approve">Approve</string>
+    <string name="status">Status:</string>
     <string-array name="purpose_array">
         <item> Platform Project</item>
         <item> Customer Project</item>

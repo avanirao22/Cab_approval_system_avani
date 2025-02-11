@@ -1,97 +1,328 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp"
     android:background="@android:color/white">
 
-    <TextView
-        android:id="@+id/name_textview"
+    <LinearLayout
+        android:id="@+id/layout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Employee Name:"
-        android:textSize="18sp"
-        android:layout_marginTop="8dp" />
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/outer_layout"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent">
 
-    <TextView
-        android:id="@+id/emp_id_textview"
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Employee Name:"
+                android:textColor="@color/text_color"
+                android:textSize="12sp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/name_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="John Doe"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="10dp" />
+        </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/drop_down_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Emp ID:"
-        android:textSize="16sp"
-        android:layout_marginTop="4dp" />
+        android:layout_height="30dp"
+        android:layout_marginEnd="16dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/baseline_arrow_drop_down_24"
+        android:visibility="visible"
+        android:background="@color/semi_transparent_white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toRightOf="@id/layout1"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
-    <TextView
-        android:id="@+id/emp_emailid_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Email ID:"
-        android:textSize="16sp"
-        android:layout_marginTop="4dp" />
-
-    <TextView
-        android:id="@+id/source_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Pick-up point:"
-        android:textSize="16sp"
-        android:layout_marginTop="4dp" />
-
-    <TextView
-        android:id="@+id/destination_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Drop-off:"
-        android:textSize="16sp"
-        android:layout_marginTop="4dp" />
-
-    <TextView
-        android:id="@+id/date_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Date:"
-        android:textSize="16sp"
-        android:layout_marginTop="4dp" />
-
-    <TextView
-        android:id="@+id/time_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Time:"
-        android:textSize="16sp"
-        android:layout_marginTop="4dp" />
-
-    <TextView
-        android:id="@+id/distance_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Distance:"
-        android:textSize="16sp"
-        android:layout_marginTop="4dp" />
-
-    <TextView
-        android:id="@+id/project_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Project:"
-        android:textSize="16sp"
-        android:layout_marginTop="4dp" />
-
-    <TextView
-        android:id="@+id/status_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Status:"
-        android:textSize="16sp"
-        android:layout_marginTop="4dp" />
-
-    <com.google.android.material.chip.Chip
-        android:id="@+id/approve_chip"
+    <LinearLayout
+        android:id="@+id/outer_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Approve"
-        app:chipIconVisible="true" />
-</LinearLayout>
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/layout1"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:id="@+id/layout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="@id/outer_layout"
+            app:layout_constraintBottom_toTopOf="@id/layout3">
+
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Employee ID:"
+                android:textColor="@color/text_color"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/emp_id_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="EMP12345"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="10dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/layout2"
+            app:layout_constraintBottom_toTopOf="@id/layout4">
+
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Email ID:"
+                android:textColor="@color/text_color"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/emp_emailid_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="john.doe@example.com"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="10dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/layout3"
+            app:layout_constraintBottom_toTopOf="@id/layout5">
+
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Source:"
+                android:textColor="@color/text_color"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/source_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Main Office, Downtown"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="10dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/layout4"
+            app:layout_constraintBottom_toTopOf="@id/layout6">
+
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Destination:"
+                android:textColor="@color/text_color"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/destination_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Client Office, Uptown"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="10dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/layout5"
+            app:layout_constraintBottom_toTopOf="@id/layout7">
+
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Date:"
+                android:textColor="@color/text_color"
+                android:textSize="12sp"
+                android:textStyle="normal"
+                android:layout_marginTop="8dp"
+                tools:ignore="TextSizeCheck" />
+
+            <TextView
+                android:id="@+id/date_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2025-02-10"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="10dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/layout6"
+            app:layout_constraintBottom_toTopOf="@id/layout8">
+
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Time:"
+                android:textColor="@color/text_color"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/time_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="09:00 AM"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="10dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/layout7"
+            app:layout_constraintBottom_toTopOf="@id/layout9">
+
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Distance:"
+                android:textColor="@color/text_color"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/distance_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="15 km"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="10dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout9"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/layout8"
+            app:layout_constraintBottom_toTopOf="@id/layout10">
+
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Project:"
+                android:textColor="@color/text_color"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/project_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Project Alpha"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="10dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/layout9"
+            app:layout_constraintBottom_toTopOf="@id/approve_chip">
+
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Status:"
+                android:textColor="@color/text_color"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/status_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Pending Approval"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="10dp" />
+
+        </LinearLayout>
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/approve_chip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/layout10"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="8dp"
+            android:text="Approve"
+            android:textSize="14sp"
+            app:chipIconVisible="true"
+            android:background="@drawable/edittext_bkg" />
+    </LinearLayout>
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

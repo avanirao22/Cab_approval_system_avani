@@ -4,6 +4,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +48,8 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
     public RequestViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.recycler_view_layout_activity, parent, false);
         return new RequestViewHolder(view);
+
+
     }
 
     @Override
@@ -62,6 +66,19 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
         holder.distanceTextView.setText(request.getDistance());
         holder.projectTextView.setText(request.getProject());
         holder.statusTextView.setText(request.getStatus());
+
+        holder.detailsLayout.setVisibility(View.GONE);
+
+        // Handle expand and collapse on ImageButton click
+        holder.drop_down_button.setOnClickListener(v -> {
+            if (holder.detailsLayout.getVisibility() == View.VISIBLE) {
+                holder.detailsLayout.setVisibility(View.GONE);
+                holder.drop_down_button.setImageResource(R.drawable.baseline_arrow_drop_down_24); // Use collapse icon
+            } else {
+                holder.detailsLayout.setVisibility(View.VISIBLE);
+                holder.drop_down_button.setImageResource(R.drawable.baseline_arrow_drop_up_24); // Use expand icon
+            }
+        });
 
         holder.approveChip.setOnClickListener(v -> updateRequestStatus(request, holder.statusTextView, holder.approveChip));
     }
@@ -124,20 +141,20 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
                                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
                                 String formattedTime = sdf.format(new Date(currentTimeMillis));
 
-                                approvedRequestData.put("approved_time", formattedTime);
-                                approvedRequestData.put("approver_name", finalApproverName);
-                                approvedRequestData.put("approver_email", approverEmail);
-                                approvedRequestData.put("date", request.getDate());
-                                approvedRequestData.put("distance", request.getDistance());
-                                approvedRequestData.put("dropoffLocation", request.getDropoffLocation());
+                                approvedRequestData.put("Approved_time", formattedTime);
+                                approvedRequestData.put("Approver_name", finalApproverName);
+                                approvedRequestData.put("Approver_email", approverEmail);
+                                approvedRequestData.put("Date", request.getDate());
+                                approvedRequestData.put("Distance", request.getDistance());
+                                approvedRequestData.put("Destination", request.getDropoffLocation());
                                 approvedRequestData.put("Emp_ID", request.getEmpId());
                                 approvedRequestData.put("Emp_name", request.getEmpName());
                                 approvedRequestData.put("Emp_email", request.getEmpEmail());
-                                approvedRequestData.put("PickupLocation", request.getPickupLocation());
+                                approvedRequestData.put("Source", request.getPickupLocation());
                                 approvedRequestData.put("Project", request.getProject());
                                 approvedRequestData.put("Request_id", request.getRequestId());
                                 approvedRequestData.put("Status", "Approved");
-                                approvedRequestData.put("time", request.getTime());
+                                approvedRequestData.put("Time", request.getTime());
 
                                 approvedRequestsRef.child(request.getRequestId()).setValue(approvedRequestData)
                                         .addOnCompleteListener(task -> {
@@ -192,6 +209,8 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
                 dropoffTextView, dateTextView, timeTextView, distanceTextView,
                 projectTextView, statusTextView;
         Chip approveChip;
+        ImageButton drop_down_button;
+        LinearLayout detailsLayout;
 
         public RequestViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -207,7 +226,11 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
             projectTextView = itemView.findViewById(R.id.project_textview);
             statusTextView = itemView.findViewById(R.id.status_textview);
             approveChip = itemView.findViewById(R.id.approve_chip);
+            drop_down_button =  itemView.findViewById(R.id.drop_down_button);
+            detailsLayout = itemView.findViewById(R.id.outer_layout);
         }
+
     }
 }
+
 
