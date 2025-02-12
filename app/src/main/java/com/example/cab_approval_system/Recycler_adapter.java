@@ -84,7 +84,7 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
     }
 
     private void updateRequestStatus(RequestModel request, TextView statusTextView, Chip approveChip) {
-        if (request.getRequestId() == null || request.getEmpEmail() == null) {
+        if (request.getRequestId() == 0 || request.getEmpEmail() == null) {
             Toast.makeText(context, "Request details are incomplete.", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -122,12 +122,12 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
                             try {
                                 dbRequestId = String.valueOf(requestSnapshot.child("request_id").getValue(Long.class));
                             } catch (Exception e) {
-                                dbRequestId = requestSnapshot.child("request_id").getValue(String.class);
+                                dbRequestId = String.valueOf(requestSnapshot.child("request_id").getValue(Long.class));
                             }
 
                             String dbRequesterEmail = requestSnapshot.child("requester_email").getValue(String.class);
 
-                            if (dbRequestId != null && dbRequestId.equals(request.getRequestId()) &&
+                            if (dbRequestId != null && dbRequestId.equals(String.valueOf(request.getRequestId())) &&
                                     dbRequesterEmail != null && dbRequesterEmail.equals(request.getEmpEmail())) {
 
                                 // Copy specific request fields to the Approved_requests table
@@ -147,7 +147,7 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
                                 approvedRequestData.put("Date", request.getDate());
                                 approvedRequestData.put("Distance", request.getDistance());
                                 approvedRequestData.put("Destination", request.getDropoffLocation());
-                                approvedRequestData.put("Emp_ID", request.getEmpId());
+                                approvedRequestData.put("Emp_ID", Integer.parseInt(request.getEmpId()));
                                 approvedRequestData.put("Emp_name", request.getEmpName());
                                 approvedRequestData.put("Emp_email", request.getEmpEmail());
                                 approvedRequestData.put("Source", request.getPickupLocation());
@@ -156,7 +156,8 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
                                 approvedRequestData.put("Status", "Approved");
                                 approvedRequestData.put("Time", request.getTime());
 
-                                approvedRequestsRef.child(request.getRequestId()).setValue(approvedRequestData)
+                                String request_id = String.valueOf(request.getRequestId());
+                                approvedRequestsRef.child(request_id).setValue(approvedRequestData)
                                         .addOnCompleteListener(task -> {
                                             if (task.isSuccessful()) {
                                                 // Remove the request from the Notification table

@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- Specify the use of telephony features -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+
     <uses-feature
         android:name="android.hardware.telephony"
         android:required="false" />
@@ -26,6 +27,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Supra_Cabs"
         tools:targetApi="31">
+
         <activity
             android:name=".Approver_dashboard"
             android:exported="false" />
@@ -67,8 +69,9 @@
             android:name=".MainActivity"
             android:exported="false" />
 
-        <service android:name=".Request_ride"
-            android:exported="true" >
+        <service
+            android:name=".Request_ride"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

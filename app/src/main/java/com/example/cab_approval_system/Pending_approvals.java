@@ -95,7 +95,7 @@ public class Pending_approvals extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
                             RequestModel request = new RequestModel();
-                            request.setRequestId(requestId);
+                            request.setRequestId(Integer.parseInt(requestId));
                             request.setPickupLocation(snapshot.child("pickupLocation").getValue(String.class));
                             request.setDropoffLocation(snapshot.child("dropoffLocation").getValue(String.class));
                             request.setDate(snapshot.child("date").getValue(String.class));

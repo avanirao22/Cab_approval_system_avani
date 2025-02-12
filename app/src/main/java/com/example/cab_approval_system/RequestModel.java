@@ -12,7 +12,10 @@ public class RequestModel {
     private String distance;
     private String project;
     private String status;
-    private String requestId;
+    private int requestId;
+    private String approverName;
+    private String approvedTime;
+    private String approverEmail;
 
     public RequestModel() {
         // Default constructor required for Firebase
@@ -98,11 +101,33 @@ public class RequestModel {
         this.status = status;
     }
 
-    public String getRequestId() {
+    public int getRequestId() {
         return requestId;
     }
 
-    public void setRequestId(String requestId) {
+    public void setRequestId(int requestId) {
         this.requestId = requestId;
+    }
+
+    public String getApproverName() {
+        return approverName;
+    }
+
+    public void setApproverName(String approverName) {
+        this.approverName = approverName;
+    }
+    public String getApprovedTime() {
+        return approvedTime;
+    }
+
+    public void setApprovedTime(String approvedTime) {
+        this.approvedTime = approvedTime;
+    }
+    public String getApproverEmail() {
+        return approverEmail;
+    }
+
+    public void setApproverEmail(String approverEmail) {
+        this.approverEmail = approverEmail;
     }
 }
