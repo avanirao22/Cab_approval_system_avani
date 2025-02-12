@@ -5,6 +5,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -64,6 +66,18 @@ public class History_adapter extends RecyclerView.Adapter<History_adapter.Histor
         holder.approved_time_textview.setText(request.getApprovedTime() != null ? request.getApprovedTime() : "N/A");
         holder.approver_email_textview.setText(request.getApproverEmail() != null ? request.getApproverEmail() : "N/A");
 
+        holder.detailsLayout.setVisibility(View.GONE);
+
+        holder.drop_down_button.setOnClickListener(v -> {
+            if (holder.detailsLayout.getVisibility() == View.VISIBLE) {
+                holder.detailsLayout.setVisibility(View.GONE);
+                holder.drop_down_button.setImageResource(R.drawable.baseline_arrow_drop_down_24); // Use collapse icon
+            } else {
+                holder.detailsLayout.setVisibility(View.VISIBLE);
+                holder.drop_down_button.setImageResource(R.drawable.baseline_arrow_drop_up_24); // Use expand icon
+            }
+        });
+
            /* boolean isExpanded = request.isExpanded();
             holder.detailsLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
 
@@ -102,6 +116,8 @@ public class History_adapter extends RecyclerView.Adapter<History_adapter.Histor
                 dropoffTextView, dateTextView, timeTextView, distanceTextView,
                 projectTextView, approver_name_textview, approver_email_textview,approved_time_textview, statusTextView;
         //View approveChip; // Change from Chip to View for hiding
+        ImageButton drop_down_button;
+        LinearLayout detailsLayout;
 
         public HistoryViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -119,6 +135,8 @@ public class History_adapter extends RecyclerView.Adapter<History_adapter.Histor
             approved_time_textview = itemView.findViewById(R.id.approved_time_textview);
             approver_email_textview = itemView.findViewById(R.id.approver_email_textview);
             statusTextView = itemView.findViewById(R.id.status_textview);
+            drop_down_button =  itemView.findViewById(R.id.drop_down_button);
+            detailsLayout = itemView.findViewById(R.id.outer_layout);
            /* functionalApprovalTextView = itemView.findViewById(R.id.functional_approval_textview);
             hrApprovalTextView = itemView.findViewById(R.id.hr_approval_textview);
             approveHRButton = itemView.findViewById(R.id.approve_hr_button);

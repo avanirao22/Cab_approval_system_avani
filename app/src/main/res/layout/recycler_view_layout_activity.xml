@@ -322,7 +322,4 @@
             android:background="@drawable/edittext_bkg" />
     </LinearLayout>
 
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

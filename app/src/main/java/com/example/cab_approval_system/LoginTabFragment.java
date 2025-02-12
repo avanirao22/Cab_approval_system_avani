@@ -1,6 +1,8 @@
 package com.example.cab_approval_system;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -21,7 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class LoginTabFragment extends Fragment {
 
     private DatabaseReference databaseReference,  employeeReference;
-
+    private SharedPreferences shared_userRole;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -33,6 +35,7 @@ public class LoginTabFragment extends Fragment {
         Button loginButton = view.findViewById(R.id.login_button);
         Button registrationButton = view.findViewById(R.id.registration_button);
 
+        shared_userRole = requireActivity().getSharedPreferences("UserRole", Context.MODE_PRIVATE);
         // Login button click listener
         loginButton.setOnClickListener(v -> {
             String email = emailField.getText().toString().trim();
@@ -113,15 +116,8 @@ public class LoginTabFragment extends Fragment {
                                     // Successfully fetched the role, navigate to home page
                                     Toast.makeText(getContext(), "Login successful as " + userRole, Toast.LENGTH_SHORT).show();
 
-                                    // Pass the user role and email to the Home Page
-                                    Intent intent = new Intent(getContext(), Home_page.class);
-                                    intent.putExtra("email", email);
-                                    intent.putExtra("userRole", userRole);
-                                    startActivity(intent);
-
-                                    if (getActivity() != null) {
-                                        getActivity().finish();
-                                    }
+                                    saveUserSession(email, userRole);
+                                    navigateToHome(email, userRole);
                                     return;
                                 } else {
                                     Toast.makeText(getContext(), "Role not found for this user", Toast.LENGTH_SHORT).show();
@@ -135,5 +131,25 @@ public class LoginTabFragment extends Fragment {
                     }
                 });
     }
+
+    private void saveUserSession(String email, String userRole) {
+        SharedPreferences.Editor editor = shared_userRole.edit();
+        editor.putString("email", email);
+        editor.putString("userRole", userRole);
+        editor.apply();
+    }
+
+    private void navigateToHome(String email, String userRole) {
+        Toast.makeText(getContext(), "Login successful as " + userRole, Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getContext(), Home_page.class);
+        intent.putExtra("email", email);
+        intent.putExtra("userRole", userRole);
+        startActivity(intent);
+        if (getActivity() != null) {
+            getActivity().finish();
+        }
+    }
+
+
 
 }

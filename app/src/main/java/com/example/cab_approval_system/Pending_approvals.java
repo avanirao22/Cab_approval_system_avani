@@ -34,13 +34,16 @@ public class Pending_approvals extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pending_approvals);
 
+
+        Intent intent = getIntent();
+        String passedEmail = intent.getStringExtra("email");
+        String userRole = intent.getStringExtra("userRole");
+
         recyclerView = findViewById(R.id.pending_approvals_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Get passed data (email and role)
-        Intent intent = getIntent();
-        String passedEmail = intent.getStringExtra("email");
-        String userRole = intent.getStringExtra("userRole");
+
 
         if ("HR Head".equals(userRole) || "FH".equals(userRole)) {
             approverEmail =passedEmail;

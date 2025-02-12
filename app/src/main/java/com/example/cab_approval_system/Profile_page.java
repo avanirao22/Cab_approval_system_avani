@@ -27,7 +27,7 @@ public class Profile_page extends AppCompatActivity {
     private Button resetSaveButton;
 
     private DatabaseReference passwordReference;
-    private String userEmail;
+    private String userEmail,user_role;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +36,8 @@ public class Profile_page extends AppCompatActivity {
 
         Intent intentProfile = getIntent();
         userEmail = intentProfile.getStringExtra("email");
-        Home_Screen.setupBottomNavigation(this,userEmail);
+        user_role = getIntent().getStringExtra("userRole");
+        Home_Screen.setupBottomNavigation(this,userEmail,user_role);
 
         // Initialize Firebase reference
         passwordReference = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
@@ -48,6 +49,8 @@ public class Profile_page extends AppCompatActivity {
         resetSaveButton = findViewById(R.id.reset_password_button);
         passwordEditText = findViewById(R.id.employee_password_editText);
         passwordToggle = findViewById(R.id.password_toggle);
+
+        passwordTextView.setTransformationMethod(new PasswordTransformationMethod());
 
         passwordToggle.setOnClickListener(view -> {
             if (isPasswordVisible) {

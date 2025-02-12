@@ -18,11 +18,16 @@ public class History_page extends AppCompatActivity {
     private List<RequestModel> approvedRequestList;
     private DatabaseReference approvedRequestsRef, employeeRef;
     private Map<String, String> employeeTeamMap = new HashMap<>();
+    private String user_role,user_email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history_page);
+
+        user_email =  getIntent().getStringExtra("email");
+        user_role = getIntent().getStringExtra("userRole");
+        Home_Screen.setupBottomNavigation(this,user_email,user_role);
 
         String requesterEmail = getIntent().getStringExtra("email");
         if (requesterEmail == null) {

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -9,261 +10,410 @@
 
     <!-- Employee Name -->
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/layout1"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/outer_layout"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="Employee Name:"
-            android:textSize="18sp"
+            android:textColor="@color/text_color"
+            android:textSize="12sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/name_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textSize="18sp" />
+            android:hint="Name"
+            android:textStyle="normal"
+            android:textSize="12sp"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="10dp" />
     </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/drop_down_button"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_marginEnd="16dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/baseline_arrow_drop_down_24"
+        android:visibility="visible"
+        android:background="@color/semi_transparent_white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toRightOf="@id/layout1"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
     <!-- Employee ID -->
     <LinearLayout
+        android:id="@+id/outer_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/layout1"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/layout2"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Emp ID:"
-            android:textSize="16sp" />
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="@id/outer_layout"
+            app:layout_constraintBottom_toTopOf="@id/layout3">
 
-        <TextView
-            android:id="@+id/emp_id_textview"
-            android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="Employee ID:"
+                android:textColor="@color/text_color"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/emp_id_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="EMP ID"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="10dp" />
+        </LinearLayout>
+
+        <!-- Email ID -->
+        <LinearLayout
+            android:id="@+id/layout3"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textSize="16sp" />
-    </LinearLayout>
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/layout2"
+            app:layout_constraintBottom_toTopOf="@id/layout4">
 
-    <!-- Email ID -->
-    <LinearLayout
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="Email ID:"
+                android:textColor="@color/text_color"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/emp_emailid_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Email ID"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="10dp" />
+
+        </LinearLayout>
+        <!-- Pick-up Point -->
+        <LinearLayout
+            android:id="@+id/layout4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/layout3"
+            app:layout_constraintBottom_toTopOf="@id/layout5">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="Source:"
+                android:textColor="@color/text_color"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/source_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Pick Up Point"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="10dp" />
+
+        </LinearLayout>
+        <!-- Drop off Point -->
+        <LinearLayout
+            android:id="@+id/layout5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/layout4"
+            app:layout_constraintBottom_toTopOf="@id/layout6">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="Destination:"
+                android:textColor="@color/text_color"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/destination_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Drop-off Point"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="10dp" />
+        </LinearLayout>
+
+        <!-- Date -->
+        <LinearLayout
+            android:id="@+id/layout6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/layout5"
+            app:layout_constraintBottom_toTopOf="@id/layout7">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="Date:"
+                android:textColor="@color/text_color"
+                android:textSize="12sp"
+                android:textStyle="normal"
+                android:layout_marginTop="8dp"
+                tools:ignore="TextSizeCheck" />
+
+            <TextView
+                android:id="@+id/date_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Date"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="10dp" />
+        </LinearLayout>
+
+        <!-- Time -->
+
+        <LinearLayout
+            android:id="@+id/layout7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/layout6"
+            app:layout_constraintBottom_toTopOf="@id/layout8">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="Time:"
+                android:textColor="@color/text_color"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/time_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Time"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="10dp" />
+        </LinearLayout>
+
+        <!-- Distance -->
+        <LinearLayout
+            android:id="@+id/layout8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/layout7"
+            app:layout_constraintBottom_toTopOf="@id/layout9">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="Distance:"
+                android:textColor="@color/text_color"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/distance_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="15 km"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="10dp" />
+        </LinearLayout>
+
+        <!-- Project -->
+        <LinearLayout
+            android:id="@+id/layout9"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/layout8"
+            app:layout_constraintBottom_toTopOf="@id/layout10">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="Project:"
+                android:textColor="@color/text_color"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/project_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Project Name"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="10dp" />
+        </LinearLayout>
+
+        <!-- approver name-->
+        <LinearLayout
+            android:id="@+id/layout10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/layout9"
+            app:layout_constraintBottom_toTopOf="@+id/layout11">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="Approver Name:"
+                android:textColor="@color/text_color"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/approver_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Approver Name"
+                android:textSize="12sp"
+                android:textStyle="normal"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="10dp" />
+        </LinearLayout>
+
+        <!--approved time -->
+        <LinearLayout
+            android:id="@+id/layout11"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/layout10"
+            app:layout_constraintBottom_toTopOf="@+id/layout12">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="Approved Time:"
+                android:textColor="@color/text_color"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/approved_time_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Approved Time"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="10dp"  />
+        </LinearLayout>
+
+        <!-- approver email -->
+        <LinearLayout
+            android:id="@+id/layout12"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/layout11"
+            app:layout_constraintBottom_toTopOf="@+id/layout13">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="Approver Email:"
+                android:textColor="@color/text_color"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/approver_email_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Approver Email"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="10dp"  />
+        </LinearLayout>
+        <!-- Status -->
+        <LinearLayout
+        android:id="@+id/layout13"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/layout12"
+        app:layout_constraintBottom_toTopOf="parent">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Email ID:"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/emp_emailid_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textSize="16sp" />
-    </LinearLayout>
-
-    <!-- Pick-up Point -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Pick-up Point:"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/source_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textSize="16sp" />
-    </LinearLayout>
-
-    <!-- Drop-off -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Drop-off:"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/destination_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textSize="16sp" />
-    </LinearLayout>
-
-    <!-- Date -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Date:"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/date_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textSize="16sp" />
-    </LinearLayout>
-
-    <!-- Time -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Time:"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/time_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textSize="16sp" />
-    </LinearLayout>
-
-    <!-- Distance -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Distance:"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/distance_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textSize="16sp" />
-    </LinearLayout>
-
-    <!-- Project -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Project:"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/project_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textSize="16sp" />
-    </LinearLayout>
-    <!-- approver name-->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Approver Name:"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/approver_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textSize="16sp" />
-    </LinearLayout>
-    <!--approved time -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Approved Time:"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/approved_time_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textSize="16sp" />
-    </LinearLayout>
-    <!-- approver email -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Approver email:"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/approver_email_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textSize="16sp" />
-    </LinearLayout>
-    <!-- Status -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:text="Status:"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textColor="@color/text_color"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:layout_marginTop="8dp" />
 
         <TextView
             android:id="@+id/status_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:hint="Status"
+            android:textStyle="normal"
+            android:textSize="12sp"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="10dp" />
+
     </LinearLayout>
 
-</LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

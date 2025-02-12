@@ -18,74 +18,101 @@ public class Home_page extends AppCompatActivity {
 
     private TextView emp_Name, empID, empTeam;
     private DatabaseReference databaseReference;
-    private ImageView notificationDot;// Add an ImageView for notification dot
-    private String user_email;
+    private ImageView notificationDot; // Notification dot
+    private String user_email, user_role;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
 
-        user_email =  getIntent().getStringExtra("email");
-        Home_Screen.setupBottomNavigation(this,user_email);
+        // Get user details from intent
+        user_email = getIntent().getStringExtra("email");
+        user_role = getIntent().getStringExtra("userRole");
 
+        Home_Screen.setupBottomNavigation(this, user_email,user_role);
+
+        // Initialize UI elements
         emp_Name = findViewById(R.id.emp_name_fetch);
         empID = findViewById(R.id.emp_id_edit_text);
         empTeam = findViewById(R.id.emp_team_edit_text);
-        notificationDot = findViewById(R.id.notification_dot);  // Initialize the notification dot
+        notificationDot = findViewById(R.id.notification_dot);
 
         // Initialize buttons
         ImageButton request_ride = findViewById(R.id.request_ride);
         ImageButton pending_approvals = findViewById(R.id.pending_approvals);
         ImageButton cab_request = findViewById(R.id.cab_request);
 
-        // Get passed data (email and role)
-        Intent intent = getIntent();
-        String passedEmail = intent.getStringExtra("email");
-        String userRole = intent.getStringExtra("userRole");
+        // Ensure user_role is assigned before checking visibility
+        updateButtonVisibility(user_role, pending_approvals, cab_request);
 
-        // Initialize Firebase database reference
+        // Initialize Firebase reference
         databaseReference = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
                 .getReference("Sheet1");
 
-        // Fetch user data from the database
-        if (passedEmail != null) {
-            fetchUserData(passedEmail);
-            checkForUnreadNotifications(passedEmail);  // Check for notifications
+        // Fetch user data & notifications
+        if (user_email != null) {
+            fetchUserData(user_email);
+            checkForUnreadNotifications(user_email);
         } else {
             Toast.makeText(this, "No email provided", Toast.LENGTH_SHORT).show();
         }
 
-        // Handle visibility based on user role
-        if ("Employee".equals(userRole)) {
-            // Only request button visible for employees
-            pending_approvals.setVisibility(View.GONE);
-            cab_request.setVisibility(View.GONE);
-        } else if ("HR Head".equals(userRole) || "FH".equals(userRole)) {
-            // Show both request and pending approvals for HR and Functional Heads
-            pending_approvals.setVisibility(View.VISIBLE);
-            cab_request.setVisibility(View.GONE);
-        }
-
-        // Handle button clicks
+        // Button click listeners
         request_ride.setOnClickListener(v -> {
             Intent i = new Intent(Home_page.this, Request_ride.class);
-            i.putExtra("email", passedEmail);
+            i.putExtra("email", user_email);
             startActivity(i);
         });
 
         pending_approvals.setOnClickListener(v -> {
             Intent i = new Intent(Home_page.this, Pending_approvals.class);
-            i.putExtra("email", passedEmail);
-            i.putExtra("userRole", userRole);
+            i.putExtra("email", user_email);
+            i.putExtra("userRole", user_role);
             startActivity(i);
         });
 
         cab_request.setOnClickListener(v -> {
             Intent i = new Intent(Home_page.this, Cab_request.class);
-            i.putExtra("email", passedEmail);
+            i.putExtra("email", user_email);
             startActivity(i);
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fetchUserRoleAndUpdateUI(); // Fetch updated role and set visibility
+    }
+
+    private void fetchUserRoleAndUpdateUI() {
+        DatabaseReference userRoleRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
+                .getReference("Registration_data");
+
+        String modifiedEmail = user_email.replace(".", ",");
+
+        userRoleRef.child(modifiedEmail).child("userRole").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult().exists()) {
+                user_role = task.getResult().getValue(String.class);
+
+                // Now update the button visibility with the latest userRole
+                updateButtonVisibility(user_role, findViewById(R.id.pending_approvals), findViewById(R.id.cab_request));
+            }
+        });
+    }
+
+
+    private void updateButtonVisibility(String userRole, ImageButton pending_approvals, ImageButton cab_request) {
+        if (userRole == null) return; // Prevent null exceptions
+
+        // Handle visibility based on user role
+        if ("Employee".equals(userRole)) {
+            pending_approvals.setVisibility(View.GONE);
+            cab_request.setVisibility(View.GONE);
+        } else if ("HR Head".equals(userRole) || "FH".equals(userRole)) {
+            pending_approvals.setVisibility(View.VISIBLE);
+            cab_request.setVisibility(View.GONE);
+        }
     }
 
     private void fetchUserData(String email) {
@@ -102,12 +129,10 @@ public class Home_page extends AppCompatActivity {
 
                         if (dataSnapshot.exists()) {
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                // Retrieve user details
                                 String empId = String.valueOf(snapshot.child("Emp ID").getValue());
                                 String empName = String.valueOf(snapshot.child("Employee Name").getValue());
                                 String team = String.valueOf(snapshot.child("Team").getValue());
 
-                                // Set data to TextViews
                                 empID.setText(empId);
                                 emp_Name.setText(empName);
                                 empTeam.setText(team);
@@ -125,7 +150,6 @@ public class Home_page extends AppCompatActivity {
         DatabaseReference notificationsRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
                 .getReference("Notification");
 
-        // Listen for real-time updates
         notificationsRef.orderByChild("approver_email").equalTo(approverEmail)
                 .addValueEventListener(new com.google.firebase.database.ValueEventListener() {
                     @Override
@@ -138,8 +162,9 @@ public class Home_page extends AppCompatActivity {
                                 break;
                             }
                         }
-                        // Show/hide notification dot based on unread notifications
-                        notificationDot.setVisibility(hasUnreadNotifications ? View.VISIBLE : View.GONE);
+                        if (notificationDot != null) {
+                            notificationDot.setVisibility(hasUnreadNotifications ? View.VISIBLE : View.GONE);
+                        }
                     }
 
                     @Override
@@ -148,5 +173,4 @@ public class Home_page extends AppCompatActivity {
                     }
                 });
     }
-
 }
