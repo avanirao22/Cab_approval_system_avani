@@ -51,7 +51,7 @@ public class Pending_approvals extends AppCompatActivity {
 
         requestList = new ArrayList<>();
         requestMap = new HashMap<>();
-        recyclerAdapter = new Recycler_adapter(this, requestList,approverEmail);
+        recyclerAdapter = new Recycler_adapter(this, requestList,approverEmail,userRole);
         recyclerView.setAdapter(recyclerAdapter);
 
         requestRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
@@ -102,8 +102,7 @@ public class Pending_approvals extends AppCompatActivity {
                             request.setPickupLocation(snapshot.child("pickupLocation").getValue(String.class));
                             request.setDropoffLocation(snapshot.child("dropoffLocation").getValue(String.class));
                             request.setDate(snapshot.child("date").getValue(String.class));
-                            request.setDistance(snapshot.child("distanceObtained").getValue(String.class));
-                            request.setProject(snapshot.child("project").getValue(String.class));
+                            request.setPurpose(snapshot.child("purpose").getValue(String.class));
                             request.setTime(snapshot.child("time").getValue(String.class));
                             request.setStatus(snapshot.child("status").getValue(String.class));
 

@@ -9,8 +9,7 @@ public class RequestModel {
     private String dropoffLocation;
     private String date;
     private String time;
-    private String distance;
-    private String project;
+    private String purpose;
     private String status;
     private int requestId;
     private String approverName;
@@ -77,20 +76,12 @@ public class RequestModel {
         this.time = time;
     }
 
-    public String getDistance() {
-        return distance;
+    public String getPurpose() {
+        return purpose;
     }
 
-    public void setDistance(String distance) {
-        this.distance = distance;
-    }
-
-    public String getProject() {
-        return project;
-    }
-
-    public void setProject(String project) {
-        this.project = project;
+    public void setPurpose(String project) {
+        this.purpose = project;
     }
 
     public String getStatus() {

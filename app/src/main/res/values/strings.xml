@@ -21,7 +21,7 @@
     <string name="drop_off">Drop Off</string>
     <string name="time">Time</string>
     <string name="date">Date</string>
-    <string name="project">Project</string>
+    <string name="purpose">Purpose</string>
     <string name="date_picker">Date_picker</string>
     <string name="number_of_people_for_ride">Number of people for ride</string>
     <string name="enter_time">Enter time</string>
@@ -38,6 +38,7 @@
     <string name="pick_up_point">Pick-up point:</string>
     <string name="approve">Approve</string>
     <string name="status">Status:</string>
+    <string name="passenger_details">Passenger Details</string>
     <string-array name="purpose_array">
         <item> Platform Project</item>
         <item> Customer Project</item>

@@ -3,13 +3,13 @@ package com.example.cab_approval_system;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Spinner;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -23,6 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -34,13 +35,14 @@ import java.util.Map;
 public class Request_ride extends AppCompatActivity {
 
     private ImageButton time_picker_button, date_picker_button, decrease_button, increase_button;
-    private TextView time_selected, date_selected, people_count, num_of_riders_edit_text, distance;
+    private TextView time_selected, date_selected, people_count, num_of_riders_edit_text, passengers_details;
     private View num_of_people_horizontal_layout;
-    private ToggleButton toggle_button;
+    private ToggleButton select_toggle_button;
     private Button request_button;
-    private EditText pickup, dropoff;
-    private Spinner project_spinner;
+    private EditText pickup, dropoff,purpose_of_ride;
     private String email_id;
+    private LinearLayout passenger_layout;
+    private int passenger_count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,17 +77,14 @@ public class Request_ride extends AppCompatActivity {
         people_count = findViewById(R.id.num_of_rides_edit_text);
         num_of_riders_edit_text = findViewById(R.id.people_count);
         num_of_people_horizontal_layout = findViewById(R.id.inner_num_of_passenger_layout);
-        toggle_button = findViewById(R.id.toggleButton);
+        select_toggle_button = findViewById(R.id.select_toggleButton);
         request_button = findViewById(R.id.request_btn);
         pickup = findViewById(R.id.source_edit_text);
         dropoff = findViewById(R.id.destination_edit_text);
-        distance = findViewById(R.id.distance_edit_text);
-        project_spinner = findViewById(R.id.project_spinner);
+        purpose_of_ride = findViewById(R.id.purpose_edittext);
+        passengers_details = findViewById(R.id.passenger_details);
+        passenger_layout = findViewById(R.id.passengerdetails_layout);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                this, R.array.purpose_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        project_spinner.setAdapter(adapter);
     }
 
     private void setupDateTimePickers() {
@@ -137,41 +136,72 @@ public class Request_ride extends AppCompatActivity {
     }
 
     private void setupToggleButton() {
-        toggle_button.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        select_toggle_button.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            int passengerCount = Integer.parseInt(people_count.getText().toString());
+            //setting visibility on click of select button
+            if (passengerCount > 1 && passengers_details.getVisibility() == View.GONE) {
+                passengers_details.setVisibility(View.VISIBLE);
+            }
+
             if (isChecked) {
-                String currentCount = people_count.getText().toString();
-                num_of_riders_edit_text.setText(currentCount);
+                num_of_riders_edit_text.setText(String.valueOf(passengerCount));
                 num_of_people_horizontal_layout.setVisibility(View.GONE);
                 num_of_riders_edit_text.setVisibility(View.VISIBLE);
+
+                generateEditTexts(passengerCount - 1);
             } else {
-                String selectedNumber = num_of_riders_edit_text.getText().toString();
-                people_count.setText(selectedNumber);
+                people_count.setText(num_of_riders_edit_text.getText().toString());
                 num_of_people_horizontal_layout.setVisibility(View.VISIBLE);
                 num_of_riders_edit_text.setVisibility(View.GONE);
+                passenger_layout.removeAllViews(); // Clear all passenger fields when toggled off
             }
         });
     }
+
+    private void generateEditTexts(int numFields) {
+        passenger_layout.removeAllViews(); // Clear existing views
+
+        if (numFields <= 0) return; // No need to generate fields if count is 0 or negative
+
+        for (int i = 1; i <= numFields; i++) {
+            TextView textView = new TextView(this);
+            textView.setText("Passenger " + i + ":");
+            textView.setTextSize(16);
+            textView.setPadding(10, 10, 10, 5);
+            textView.setTextColor(ContextCompat.getColor(this,R.color.text_color));
+            passenger_layout.addView(textView);
+
+            EditText editText = new EditText(this);
+            editText.setHint("Enter Passenger Name");
+            editText.setInputType(InputType.TYPE_CLASS_TEXT);
+            editText.setPadding(10, 10, 10, 10);
+            editText.setId(View.generateViewId());
+            textView.setBackgroundResource(R.drawable.edittext_bkg);
+            textView.setTextColor(ContextCompat.getColor(this,R.color.text_color));// Assign unique ID
+            passenger_layout.addView(editText);
+        }
+    }
+
 
     private void setupRequestButton() {
         request_button.setOnClickListener(v -> {
             String pickup_location = pickup.getText().toString();
             String dropoff_location = dropoff.getText().toString();
-            String distanceObtained = distance.getText().toString();
             String time = time_selected.getText().toString();
             String date = date_selected.getText().toString();
-            String project = project_spinner.getSelectedItem().toString();
-            String count = num_of_riders_edit_text.getText().toString();
+            String purpose = purpose_of_ride.getText().toString();
+            String no_of_passengers = num_of_riders_edit_text.getText().toString();
             email_id = getIntent().getStringExtra("email");
 
-            if (distanceObtained.isEmpty() || time.isEmpty() || date.isEmpty() || project.isEmpty() || count.isEmpty()) {
+            if (time.isEmpty() || date.isEmpty() || purpose.isEmpty() || no_of_passengers .isEmpty()) {
                 Toast.makeText(Request_ride.this, "All fields need to be filled", Toast.LENGTH_SHORT).show();
             } else {
-                saveDetails(pickup_location, dropoff_location, distanceObtained, time, date, project, count, email_id);
+                saveDetails(pickup_location, dropoff_location, time, date, purpose, no_of_passengers , email_id);
             }
         });
     }
 
-    private void saveDetails(String pickupLocation, String dropoffLocation, String distanceObtained, String time, String date, String project, String count, String email) {
+    private void saveDetails(String pickupLocation, String dropoffLocation, String time, String date, String purpose, String no_of_passengers, String email) {
         FirebaseDatabase database = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app");
         DatabaseReference requestDetailsRef = database.getReference("Request_details");
         DatabaseReference lastIdRef = database.getReference("Request_Counter");
@@ -183,7 +213,7 @@ public class Request_ride extends AppCompatActivity {
                 int finalNewId = lastId + 1;
 
                 // Create a new request with updated ID
-                RideRequest request = new RideRequest(finalNewId, pickupLocation, dropoffLocation, distanceObtained, time, date, project, count, email);
+                RideRequest request = new RideRequest(finalNewId, pickupLocation, dropoffLocation, time, date, purpose, no_of_passengers, email);
                 requestDetailsRef.child(String.valueOf(finalNewId)).setValue(request)
                         .addOnSuccessListener(aVoid -> {
                             Toast.makeText(Request_ride.this, "Ride Requested ", Toast.LENGTH_SHORT).show();
@@ -295,41 +325,38 @@ public class Request_ride extends AppCompatActivity {
         void onApproverFetched(String approverEmail);
     }
 
+
     private void clearFields() {
         pickup.setText("");
         dropoff.setText("");
-        distance.setText("");
         time_selected.setText("");
         date_selected.setText("");
         num_of_riders_edit_text.setText("0");
         people_count.setText("0");
-        toggle_button.setChecked(false);
-        project_spinner.setSelection(0);
+        select_toggle_button.setChecked(false);
+        purpose_of_ride.setText("");
     }
     public class RideRequest {
         private int id;
         private String pickupLocation;
         private String dropoffLocation;
-        private String distanceObtained;
         private String time;
         private String date;
-        private String project;
-        private String count;
+        private String purpose;
+        private String no_of_passengers ;
         private String email;
 
         public RideRequest(){
-
         }
 
-        public RideRequest(int id, String pickupLocation, String dropoffLocation, String distanceObtained, String time, String date, String project, String count, String email) {
+        public RideRequest(int id, String pickupLocation, String dropoffLocation, String time, String date, String purpose, String no_of_passengers, String email) {
             this.id = id;
             this.pickupLocation = pickupLocation;
             this.dropoffLocation = dropoffLocation;
-            this.distanceObtained = distanceObtained;
             this.time = time;
             this.date = date;
-            this.project = project;
-            this.count = count;
+            this.purpose = purpose;
+            this.no_of_passengers  = no_of_passengers;
             this.email = email;
         }
 
@@ -340,16 +367,14 @@ public class Request_ride extends AppCompatActivity {
         public void setPickupLocation(String pickupLocation) { this.pickupLocation = pickupLocation; }
         public String getDropoffLocation() { return dropoffLocation; }
         public void setDropoffLocation(String dropoffLocation) { this.dropoffLocation = dropoffLocation; }
-        public String getDistanceObtained() { return distanceObtained; }
-        public void setDistanceObtained(String distanceObtained) { this.distanceObtained = distanceObtained; }
         public String getTime() { return time; }
         public void setTime(String time) { this.time = time; }
         public String getDate() { return date; }
         public void setDate(String date) { this.date = date; }
-        public String getProject() { return project; }
-        public void setProject(String project) { this.project = project; }
-        public String getCount() { return count; }
-        public void setCount(String count) { this.count = count; }
+        public String getPurpose() { return purpose; }
+        public void setPurpose(String purpose) { this.purpose = purpose; }
+        public String getNo_of_passengers() { return no_of_passengers ; }
+        public void setNo_of_passengers(String no_of_passengers) { this.no_of_passengers  = no_of_passengers; }
         public String getEmail() { return email; }
         public void setEmail(String email) { this.email = email; }
     }

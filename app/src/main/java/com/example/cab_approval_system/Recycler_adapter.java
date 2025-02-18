@@ -30,13 +30,14 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
 
     private Context context;
     private List<RequestModel> requestList;
-    private String approverEmail;
+    private String approverEmail,userRole;
     private DatabaseReference notificationRef, sheet1Ref;
 
-    public Recycler_adapter(Context context, List<RequestModel> requestList, String approverEmail) {
+    public Recycler_adapter(Context context, List<RequestModel> requestList, String approverEmail, String userRole) {
         this.context = context;
         this.requestList = requestList;
         this.approverEmail = approverEmail;
+        this.userRole = userRole;
         notificationRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
                 .getReference("Notification");
         sheet1Ref = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
@@ -63,8 +64,7 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
         holder.dropoffTextView.setText(request.getDropoffLocation());
         holder.dateTextView.setText(request.getDate());
         holder.timeTextView.setText(request.getTime());
-        holder.distanceTextView.setText(request.getDistance());
-        holder.projectTextView.setText(request.getProject());
+        holder.purposeTextView.setText(request.getPurpose());
         holder.statusTextView.setText(request.getStatus());
 
         holder.detailsLayout.setVisibility(View.GONE);
@@ -145,13 +145,12 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
                                 approvedRequestData.put("Approver_name", finalApproverName);
                                 approvedRequestData.put("Approver_email", approverEmail);
                                 approvedRequestData.put("Date", request.getDate());
-                                approvedRequestData.put("Distance", request.getDistance());
                                 approvedRequestData.put("Destination", request.getDropoffLocation());
                                 approvedRequestData.put("Emp_ID", Integer.parseInt(request.getEmpId()));
                                 approvedRequestData.put("Emp_name", request.getEmpName());
                                 approvedRequestData.put("Emp_email", request.getEmpEmail());
                                 approvedRequestData.put("Source", request.getPickupLocation());
-                                approvedRequestData.put("Project", request.getProject());
+                                approvedRequestData.put("Purpose", request.getPurpose());
                                 approvedRequestData.put("Request_id", request.getRequestId());
                                 approvedRequestData.put("Status", "Approved");
                                 approvedRequestData.put("Time", request.getTime());
@@ -207,8 +206,8 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
     public static class RequestViewHolder extends RecyclerView.ViewHolder {
 
         TextView nameTextView, empIdTextView, empEmailTextView, pickupTextView,
-                dropoffTextView, dateTextView, timeTextView, distanceTextView,
-                projectTextView, statusTextView;
+                dropoffTextView, dateTextView, timeTextView,
+                purposeTextView, statusTextView;
         Chip approveChip;
         ImageButton drop_down_button;
         LinearLayout detailsLayout;
@@ -223,8 +222,7 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
             dropoffTextView = itemView.findViewById(R.id.destination_textview);
             dateTextView = itemView.findViewById(R.id.date_textview);
             timeTextView = itemView.findViewById(R.id.time_textview);
-            distanceTextView = itemView.findViewById(R.id.distance_textview);
-            projectTextView = itemView.findViewById(R.id.project_textview);
+            purposeTextView = itemView.findViewById(R.id.purpose_textview);
             statusTextView = itemView.findViewById(R.id.status_textview);
             approveChip = itemView.findViewById(R.id.approve_chip);
             drop_down_button =  itemView.findViewById(R.id.drop_down_button);

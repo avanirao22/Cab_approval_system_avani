@@ -240,7 +240,9 @@
                 android:layout_marginStart="10dp" />
         </LinearLayout>
 
-        <!-- Distance -->
+
+
+        <!-- Project -->
         <LinearLayout
             android:id="@+id/layout8"
             android:layout_width="match_parent"
@@ -252,36 +254,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="Distance:"
-                android:textColor="@color/text_color"
-                android:textStyle="normal"
-                android:textSize="12sp"
-                android:layout_marginTop="8dp" />
-
-            <TextView
-                android:id="@+id/distance_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="15 km"
-                android:textStyle="normal"
-                android:textSize="12sp"
-                android:layout_marginTop="8dp"
-                android:layout_marginStart="10dp" />
-        </LinearLayout>
-
-        <!-- Project -->
-        <LinearLayout
-            android:id="@+id/layout9"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/layout8"
-            app:layout_constraintBottom_toTopOf="@id/layout10">
-
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:text="Project:"
+                android:text="Purpose:"
                 android:textColor="@color/text_color"
                 android:textStyle="normal"
                 android:textSize="12sp"
@@ -291,7 +264,7 @@
                 android:id="@+id/project_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Project Name"
+                android:hint="Purpose of ride"
                 android:textStyle="normal"
                 android:textSize="12sp"
                 android:layout_marginTop="8dp"
@@ -300,12 +273,12 @@
 
         <!-- approver name-->
         <LinearLayout
-            android:id="@+id/layout10"
+            android:id="@+id/layout9"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/layout9"
-            app:layout_constraintBottom_toTopOf="@+id/layout11">
+            app:layout_constraintTop_toBottomOf="@id/layout8"
+            app:layout_constraintBottom_toTopOf="@+id/layout10">
 
             <TextView
                 android:layout_width="100dp"
@@ -329,12 +302,12 @@
 
         <!--approved time -->
         <LinearLayout
-            android:id="@+id/layout11"
+            android:id="@+id/layout10"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/layout10"
-            app:layout_constraintBottom_toTopOf="@+id/layout12">
+            app:layout_constraintTop_toBottomOf="@id/layout9"
+            app:layout_constraintBottom_toTopOf="@+id/layout11">
 
             <TextView
                 android:layout_width="100dp"
@@ -358,12 +331,12 @@
 
         <!-- approver email -->
         <LinearLayout
-            android:id="@+id/layout12"
+            android:id="@+id/layout11"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/layout11"
-            app:layout_constraintBottom_toTopOf="@+id/layout13">
+            app:layout_constraintTop_toBottomOf="@id/layout10"
+            app:layout_constraintBottom_toTopOf="@+id/layout12">
 
             <TextView
                 android:layout_width="100dp"
@@ -386,11 +359,11 @@
         </LinearLayout>
         <!-- Status -->
         <LinearLayout
-        android:id="@+id/layout13"
+        android:id="@+id/layout12"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/layout12"
+        app:layout_constraintTop_toBottomOf="@id/layout11"
         app:layout_constraintBottom_toTopOf="parent">
 
         <TextView

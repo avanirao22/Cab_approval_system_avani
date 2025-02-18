@@ -135,8 +135,7 @@ public class History_page extends AppCompatActivity {
         request.setPickupLocation(snapshot.child("Source").getValue(String.class));
         request.setDropoffLocation(snapshot.child("Destination").getValue(String.class));
         request.setDate(snapshot.child("Date").getValue(String.class));
-        request.setDistance(snapshot.child("Distance").getValue(String.class));
-        request.setProject(snapshot.child("Project").getValue(String.class));
+        request.setPurpose(snapshot.child("Purpose").getValue(String.class));
         request.setTime(snapshot.child("Time").getValue(String.class));
         request.setApproverName(snapshot.child("Approver_name").getValue(String.class));
         request.setApprovedTime(snapshot.child("Approved_time").getValue(String.class));

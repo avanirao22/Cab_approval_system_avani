@@ -227,32 +227,7 @@
                 android:layout_marginStart="10dp" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/layout8"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/layout7"
-            app:layout_constraintBottom_toTopOf="@id/layout9">
 
-            <TextView
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:text="Distance:"
-                android:textColor="@color/text_color"
-                android:textStyle="normal"
-                android:textSize="12sp"
-                android:layout_marginTop="8dp" />
-
-            <TextView
-                android:id="@+id/distance_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="15 km"
-                android:textSize="12sp"
-                android:layout_marginTop="4dp"
-                android:layout_marginStart="10dp" />
-        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layout9"
@@ -265,17 +240,17 @@
             <TextView
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
-                android:text="Project:"
+                android:text="Purpose:"
                 android:textColor="@color/text_color"
                 android:textStyle="normal"
                 android:textSize="12sp"
                 android:layout_marginTop="8dp" />
 
             <TextView
-                android:id="@+id/project_textview"
+                android:id="@+id/purpose_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Project Alpha"
+                android:text="Purpose"
                 android:textSize="12sp"
                 android:layout_marginTop="4dp"
                 android:layout_marginStart="10dp" />
