@@ -26,9 +26,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -43,6 +45,8 @@ public class Request_ride extends AppCompatActivity {
     private String email_id;
     private LinearLayout passenger_layout, main_passenger_layout;
     private int passenger_count;
+    Map<String, String> passengerMap = new HashMap<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,11 +158,9 @@ public class Request_ride extends AppCompatActivity {
                 num_of_riders_edit_text.setText(String.valueOf(passengerCount));
                 num_of_people_horizontal_layout.setVisibility(View.GONE);
                 num_of_riders_edit_text.setVisibility(View.VISIBLE);
-
                 passenger_name_display.setText(""); // Clear previous saved text
                 passenger_name_display.setVisibility(View.GONE);
 
-                passenger_layout.removeAllViews(); // Clear old views
                 generateEditTexts(passengerCount - 1); // Generate new EditTexts
             } else {
                 main_passenger_layout.setVisibility(View.GONE);
@@ -172,6 +174,7 @@ public class Request_ride extends AppCompatActivity {
         });
 
         save_button.setOnClickListener(v -> {
+
             StringBuilder passengerNames = new StringBuilder();
             boolean allFieldsFilled = true;
             int passengerIndex = 1; // To track correct numbering
@@ -181,6 +184,8 @@ public class Request_ride extends AppCompatActivity {
                 if (childView instanceof EditText) {
                     String name = ((EditText) childView).getText().toString().trim();
                     if (!name.isEmpty()) {
+                        String key = "Passenger " + passengerIndex;
+                        passengerMap.put(key, name);
                         passengerNames.append("Passenger ").append(passengerIndex).append(": ").append(name).append("\n");
                         passengerIndex++; // Increment only for valid passengers
                     } else {
@@ -194,6 +199,12 @@ public class Request_ride extends AppCompatActivity {
                 passenger_name_display.setVisibility(View.VISIBLE);
                 passenger_layout.removeAllViews(); // Clear EditTexts after saving
                 save_button.setVisibility(View.GONE);
+
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Rides");
+                databaseReference.child("passengerNames").setValue(passengerMap)
+                        .addOnSuccessListener(aVoid -> Log.d("Firebase", "Passenger names saved successfully"))
+                        .addOnFailureListener(e -> Log.e("Firebase", "Failed to save passenger names", e));
+
             } else {
                 Toast.makeText(Request_ride.this, "Enter all passenger names", Toast.LENGTH_SHORT).show();
             }
@@ -236,15 +247,15 @@ public class Request_ride extends AppCompatActivity {
             String no_of_passengers = num_of_riders_edit_text.getText().toString();
             email_id = getIntent().getStringExtra("email");
 
-            if (time.isEmpty() || date.isEmpty() || purpose.isEmpty() || no_of_passengers .isEmpty()) {
+            if (time.isEmpty() || date.isEmpty() || purpose.isEmpty() || no_of_passengers.isEmpty()) {
                 Toast.makeText(Request_ride.this, "All fields need to be filled", Toast.LENGTH_SHORT).show();
             } else {
-                saveDetails(pickup_location, dropoff_location, time, date, purpose, no_of_passengers , email_id);
+                saveDetails(pickup_location, dropoff_location, time, date, purpose, no_of_passengers, email_id, passengerMap);
             }
         });
     }
 
-    private void saveDetails(String pickupLocation, String dropoffLocation, String time, String date, String purpose, String no_of_passengers, String email) {
+    private void saveDetails(String pickupLocation, String dropoffLocation, String time, String date, String purpose, String no_of_passengers, String email, Map<String, String> passengerNames) {
         FirebaseDatabase database = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app");
         DatabaseReference requestDetailsRef = database.getReference("Request_details");
         DatabaseReference lastIdRef = database.getReference("Request_Counter");
@@ -256,7 +267,7 @@ public class Request_ride extends AppCompatActivity {
                 int finalNewId = lastId + 1;
 
                 // Create a new request with updated ID
-                RideRequest request = new RideRequest(finalNewId, pickupLocation, dropoffLocation, time, date, purpose, no_of_passengers, email);
+                RideRequest request = new RideRequest(finalNewId, pickupLocation, dropoffLocation, time, date, purpose, no_of_passengers, email,passengerMap);
                 requestDetailsRef.child(String.valueOf(finalNewId)).setValue(request)
                         .addOnSuccessListener(aVoid -> {
                             Toast.makeText(Request_ride.this, "Ride Requested ", Toast.LENGTH_SHORT).show();
@@ -388,11 +399,12 @@ public class Request_ride extends AppCompatActivity {
         private String purpose;
         private String no_of_passengers ;
         private String email;
+        private Map<String, String> passengerNames;
 
         public RideRequest(){
         }
 
-        public RideRequest(int id, String pickupLocation, String dropoffLocation, String time, String date, String purpose, String no_of_passengers, String email) {
+        public RideRequest(int id, String pickupLocation, String dropoffLocation, String time, String date, String purpose, String no_of_passengers, String email, Map<String, String> passengerNames) {
             this.id = id;
             this.pickupLocation = pickupLocation;
             this.dropoffLocation = dropoffLocation;
@@ -401,6 +413,7 @@ public class Request_ride extends AppCompatActivity {
             this.purpose = purpose;
             this.no_of_passengers  = no_of_passengers;
             this.email = email;
+            this.passengerNames = passengerNames;
         }
 
         // Getters and Setters
@@ -420,6 +433,8 @@ public class Request_ride extends AppCompatActivity {
         public void setNo_of_passengers(String no_of_passengers) { this.no_of_passengers  = no_of_passengers; }
         public String getEmail() { return email; }
         public void setEmail(String email) { this.email = email; }
+        public Map<String, String> getPassengerNames() { return passengerNames; }
+        public void setPassengerNames(Map<String, String> passengerNames) { this.passengerNames = passengerNames; }
     }
 
 }
