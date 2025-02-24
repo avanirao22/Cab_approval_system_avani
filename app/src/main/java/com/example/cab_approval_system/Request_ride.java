@@ -35,13 +35,13 @@ import java.util.Map;
 public class Request_ride extends AppCompatActivity {
 
     private ImageButton time_picker_button, date_picker_button, decrease_button, increase_button;
-    private TextView time_selected, date_selected, people_count, num_of_riders_edit_text, passengers_details;
+    private TextView time_selected, date_selected, people_count, num_of_riders_edit_text, passengers_details, passenger_name_display;
     private View num_of_people_horizontal_layout;
     private ToggleButton select_toggle_button;
-    private Button request_button;
+    private Button request_button,save_button;
     private EditText pickup, dropoff,purpose_of_ride;
     private String email_id;
-    private LinearLayout passenger_layout;
+    private LinearLayout passenger_layout, main_passenger_layout;
     private int passenger_count;
 
     @Override
@@ -84,7 +84,9 @@ public class Request_ride extends AppCompatActivity {
         purpose_of_ride = findViewById(R.id.purpose_edittext);
         passengers_details = findViewById(R.id.passenger_details);
         passenger_layout = findViewById(R.id.passengerdetails_layout);
-
+        save_button = findViewById(R.id.save_button);
+        passenger_name_display =  findViewById(R.id.passenger_name_display);
+        main_passenger_layout = findViewById(R.id.main_passenger_layout);
     }
 
     private void setupDateTimePickers() {
@@ -138,37 +140,78 @@ public class Request_ride extends AppCompatActivity {
     private void setupToggleButton() {
         select_toggle_button.setOnCheckedChangeListener((buttonView, isChecked) -> {
             int passengerCount = Integer.parseInt(people_count.getText().toString());
-            //setting visibility on click of select button
-            if (passengerCount > 1 && passengers_details.getVisibility() == View.GONE) {
+
+            if (passengerCount > 1) {
                 passengers_details.setVisibility(View.VISIBLE);
+                save_button.setVisibility(View.VISIBLE);
+            } else {
+                passengers_details.setVisibility(View.GONE);
+                save_button.setVisibility(View.GONE);
             }
 
             if (isChecked) {
+                main_passenger_layout.setVisibility(View.VISIBLE);
                 num_of_riders_edit_text.setText(String.valueOf(passengerCount));
                 num_of_people_horizontal_layout.setVisibility(View.GONE);
                 num_of_riders_edit_text.setVisibility(View.VISIBLE);
 
-                generateEditTexts(passengerCount - 1);
+                passenger_name_display.setText(""); // Clear previous saved text
+                passenger_name_display.setVisibility(View.GONE);
+
+                passenger_layout.removeAllViews(); // Clear old views
+                generateEditTexts(passengerCount - 1); // Generate new EditTexts
             } else {
+                main_passenger_layout.setVisibility(View.GONE);
                 people_count.setText(num_of_riders_edit_text.getText().toString());
                 num_of_people_horizontal_layout.setVisibility(View.VISIBLE);
                 num_of_riders_edit_text.setVisibility(View.GONE);
-                passenger_layout.removeAllViews(); // Clear all passenger fields when toggled off
+                passenger_layout.removeAllViews(); // Clear everything
+                passengers_details.setVisibility(View.GONE);
+                save_button.setVisibility(View.GONE);
+            }
+        });
+
+        save_button.setOnClickListener(v -> {
+            StringBuilder passengerNames = new StringBuilder();
+            boolean allFieldsFilled = true;
+            int passengerIndex = 1; // To track correct numbering
+
+            for (int i = 0; i < passenger_layout.getChildCount(); i++) {
+                View childView = passenger_layout.getChildAt(i);
+                if (childView instanceof EditText) {
+                    String name = ((EditText) childView).getText().toString().trim();
+                    if (!name.isEmpty()) {
+                        passengerNames.append("Passenger ").append(passengerIndex).append(": ").append(name).append("\n");
+                        passengerIndex++; // Increment only for valid passengers
+                    } else {
+                        allFieldsFilled = false;
+                        break;
+                    }
+                }
+            }
+            if (allFieldsFilled) {
+                passenger_name_display.setText(passengerNames.toString());
+                passenger_name_display.setVisibility(View.VISIBLE);
+                passenger_layout.removeAllViews(); // Clear EditTexts after saving
+                save_button.setVisibility(View.GONE);
+            } else {
+                Toast.makeText(Request_ride.this, "Enter all passenger names", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void generateEditTexts(int numFields) {
-        passenger_layout.removeAllViews(); // Clear existing views
 
-        if (numFields <= 0) return; // No need to generate fields if count is 0 or negative
+    private void generateEditTexts(int numFields) {
+        passenger_layout.removeAllViews(); // Ensure no leftover views
+
+        if (numFields <= 0) return;
 
         for (int i = 1; i <= numFields; i++) {
             TextView textView = new TextView(this);
             textView.setText("Passenger " + i + ":");
             textView.setTextSize(16);
             textView.setPadding(10, 10, 10, 5);
-            textView.setTextColor(ContextCompat.getColor(this,R.color.text_color));
+            textView.setTextColor(ContextCompat.getColor(this, R.color.text_color));
             passenger_layout.addView(textView);
 
             EditText editText = new EditText(this);
@@ -176,8 +219,8 @@ public class Request_ride extends AppCompatActivity {
             editText.setInputType(InputType.TYPE_CLASS_TEXT);
             editText.setPadding(10, 10, 10, 10);
             editText.setId(View.generateViewId());
-            textView.setBackgroundResource(R.drawable.edittext_bkg);
-            textView.setTextColor(ContextCompat.getColor(this,R.color.text_color));// Assign unique ID
+            editText.setBackgroundResource(R.drawable.edittext_bkg);
+            editText.setTextColor(ContextCompat.getColor(this, R.color.text_color));
             passenger_layout.addView(editText);
         }
     }

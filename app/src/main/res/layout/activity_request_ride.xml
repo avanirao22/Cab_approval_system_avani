@@ -326,22 +326,50 @@
                     tools:layout_editor_absoluteX="138dp"
                     tools:layout_editor_absoluteY="795dp" />
 
-                <TextView
-                    android:id="@+id/passenger_details"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/passenger_details"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:visibility="gone"
-                    android:textColor="@color/text_color"/>
-
                 <LinearLayout
-                    android:id="@+id/passengerdetails_layout"
+                    android:id="@+id/main_passenger_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_marginTop="8sp">
+                    app:layout_constraintTop_toBottomOf="@id/select_toggleButton">
+
+                    <TextView
+                        android:id="@+id/passenger_details"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/passenger_details"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        android:textSize="16sp"
+
+                        android:textColor="@color/text_color"/>
+
+                    <TextView
+                        android:id="@+id/passenger_name_display"
+                        android:layout_width="match_parent"
+                        android:textColor="@color/text_color"
+                        android:background="@drawable/edittext_bkg"
+                        android:padding="10dp"
+                        android:visibility="gone"
+                        android:textSize="16sp"
+                        android:layout_height="wrap_content" />
+
+                    <LinearLayout
+                        android:id="@+id/passengerdetails_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="8sp">
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+id/save_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Save"
+                        android:visibility="gone"
+                        android:layout_gravity="center"
+                        android:textColor="@color/text_color" />
                 </LinearLayout>
 
             </LinearLayout>
