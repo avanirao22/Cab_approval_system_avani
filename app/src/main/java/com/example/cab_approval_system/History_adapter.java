@@ -59,13 +59,11 @@ public class History_adapter extends RecyclerView.Adapter<History_adapter.Histor
         holder.dropoffTextView.setText(request.getDropoffLocation() != null ? request.getDropoffLocation() : "N/A");
         holder.dateTextView.setText(request.getDate() != null ? request.getDate() : "N/A");
         holder.timeTextView.setText(request.getTime() != null ? request.getTime() : "N/A");
-        holder.projectTextView.setText(request.getPurpose() != null ? request.getPurpose() : "N/A");
+        holder.purposeTextView.setText(request.getPurpose() != null ? request.getPurpose() : "N/A");
         holder.statusTextView.setText(request.getStatus() != null ? request.getStatus() : "N/A");
         holder.approver_name_textview.setText(request.getApproverName() != null ? request.getApproverName() : "N/A");
         holder.approved_time_textview.setText(request.getApprovedTime() != null ? request.getApprovedTime() : "N/A");
         holder.approver_email_textview.setText(request.getApproverEmail() != null ? request.getApproverEmail() : "N/A");
-
-        holder.detailsLayout.setVisibility(View.GONE);
 
         holder.drop_down_button.setOnClickListener(v -> {
             if (holder.detailsLayout.getVisibility() == View.VISIBLE) {
@@ -88,7 +86,7 @@ public class History_adapter extends RecyclerView.Adapter<History_adapter.Histor
 
         TextView nameTextView, empIdTextView, empEmailTextView, pickupTextView,
                 dropoffTextView, dateTextView, timeTextView,
-                projectTextView, approver_name_textview, approver_email_textview,approved_time_textview, statusTextView;
+                purposeTextView, approver_name_textview, approver_email_textview,approved_time_textview, statusTextView;
         //View approveChip; // Change from Chip to View for hiding
         ImageButton drop_down_button;
         LinearLayout detailsLayout;
@@ -103,13 +101,13 @@ public class History_adapter extends RecyclerView.Adapter<History_adapter.Histor
             dropoffTextView = itemView.findViewById(R.id.destination_textview);
             dateTextView = itemView.findViewById(R.id.date_textview);
             timeTextView = itemView.findViewById(R.id.time_textview);
-            projectTextView = itemView.findViewById(R.id.project_textview);
-            approver_name_textview = itemView.findViewById(R.id.approver_textview);
+            purposeTextView = itemView.findViewById(R.id.purpose_textview);
+            approver_name_textview = itemView.findViewById(R.id.approver_name_textview);
             approved_time_textview = itemView.findViewById(R.id.approved_time_textview);
             approver_email_textview = itemView.findViewById(R.id.approver_email_textview);
             statusTextView = itemView.findViewById(R.id.status_textview);
             drop_down_button =  itemView.findViewById(R.id.drop_down_button);
-            detailsLayout = itemView.findViewById(R.id.outer_layout);
+            detailsLayout = itemView.findViewById(R.id.details_layout_history);
         }
     }
 }

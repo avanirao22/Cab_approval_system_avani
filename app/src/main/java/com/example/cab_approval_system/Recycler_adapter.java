@@ -84,7 +84,7 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
     }
 
     private void updateRequestStatus(RequestModel request, TextView statusTextView, Chip approveChip) {
-        if (request.getRequestId() == 0 || request.getEmpEmail() == null) {
+        if (request.getRequestId() == null || request.getEmpEmail() == null) {
             Toast.makeText(context, "Request details are incomplete.", Toast.LENGTH_SHORT).show();
             return;
         }
