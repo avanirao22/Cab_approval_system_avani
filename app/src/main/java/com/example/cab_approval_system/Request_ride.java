@@ -349,6 +349,8 @@ public class Request_ride extends AppCompatActivity {
         notificationData.put("title", "Ride Request Pending");
         notificationData.put("requester_email",email_id);
 
+        Log.d("ARequest_id"," " + requestId);
+
         notificationRef.push().setValue(notificationData)
                 .addOnSuccessListener(aVoid -> Log.d("Notification", "Notification saved successfully"))
                 .addOnFailureListener(e -> Log.e("Notification", "Failed to save notification: " + e.getMessage()));

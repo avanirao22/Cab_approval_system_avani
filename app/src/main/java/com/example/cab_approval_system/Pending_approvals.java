@@ -71,8 +71,7 @@ public class Pending_approvals extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
                             for (DataSnapshot requestSnapshot : snapshot.getChildren()) {
-                                Object requestIdObj = requestSnapshot.child("request_id").getValue();
-                                String requestId = requestIdObj != null ? String.valueOf(requestIdObj) : null;
+                                String requestId = String.valueOf(requestSnapshot.child("request_id").getValue(Long.class));
                                 String requesterEmail = requestSnapshot.child("requester_email").getValue(String.class);
                                 if (requestId != null && requesterEmail != null && !requestMap.containsKey(requestId)) {
                                     fetchRequestDetails(requestId, requesterEmail);
@@ -98,13 +97,25 @@ public class Pending_approvals extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
                             RequestModel request = new RequestModel();
-                            request.setRequestId(Integer.parseInt(requestId));
+                            request.setRequestId(requestId);
                             request.setPickupLocation(snapshot.child("pickupLocation").getValue(String.class));
                             request.setDropoffLocation(snapshot.child("dropoffLocation").getValue(String.class));
                             request.setDate(snapshot.child("date").getValue(String.class));
                             request.setPurpose(snapshot.child("purpose").getValue(String.class));
                             request.setTime(snapshot.child("time").getValue(String.class));
                             request.setStatus(snapshot.child("status").getValue(String.class));
+
+                            DataSnapshot passengerSnapshot = snapshot.child("passengerNames");
+                            if (passengerSnapshot.exists()) {
+                                Map<String, String> passengerMap = new HashMap<>();
+                                for (DataSnapshot passenger : passengerSnapshot.getChildren()) {
+                                    passengerMap.put(passenger.getKey(), passenger.getValue(String.class));
+                                }
+                                request.setPassengerMap(passengerMap);
+                            }
+
+                            String noOfPassengers = snapshot.child("no_of_passengers").getValue(String.class);
+                            request.setNoOfPassengers(noOfPassengers != null ? noOfPassengers: null);
 
                             requestMap.put(requestId, request);
                             requestList.add(request);

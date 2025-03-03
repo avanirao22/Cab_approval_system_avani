@@ -183,6 +183,60 @@
             <TextView
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
+                android:text="No.of.Passengers:"
+                android:textColor="@color/text_color"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/no_of_passengers_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Client Office, Uptown"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="10dp" />
+        </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/layout6"
+        app:layout_constraintBottom_toTopOf="@id/layout8">
+
+        <TextView
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:text="Passenger Details:"
+            android:textColor="@color/text_color"
+            android:textStyle="normal"
+            android:textSize="12sp"
+            android:layout_marginTop="8dp" />
+
+        <LinearLayout
+            android:id="@+id/passenger_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:textSize="12sp"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="10dp"/>
+    </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/layout7"
+            app:layout_constraintBottom_toTopOf="@id/layout9">
+
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
                 android:text="Date:"
                 android:textColor="@color/text_color"
                 android:textSize="12sp"
@@ -201,12 +255,12 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/layout7"
+            android:id="@+id/layout9"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/layout6"
-            app:layout_constraintBottom_toTopOf="@id/layout8">
+            app:layout_constraintTop_toBottomOf="@id/layout8"
+            app:layout_constraintBottom_toTopOf="@id/layout10">
 
             <TextView
                 android:layout_width="120dp"
@@ -230,12 +284,12 @@
 
 
         <LinearLayout
-            android:id="@+id/layout8"
+            android:id="@+id/layout10"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/layout7"
-            app:layout_constraintBottom_toTopOf="@id/layout9">
+            app:layout_constraintTop_toBottomOf="@id/layout9"
+            app:layout_constraintBottom_toTopOf="@id/layout11">
 
             <TextView
                 android:layout_width="120dp"
@@ -257,11 +311,11 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/layout9"
+            android:id="@+id/layout11"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/layout8"
+            app:layout_constraintTop_toBottomOf="@id/layout10"
             app:layout_constraintBottom_toTopOf="@id/approve_chip">
 
             <TextView
@@ -294,6 +348,8 @@
             android:text="Approve"
             android:textSize="14sp"
             app:chipIconVisible="true"
+            android:clickable="true"
+            android:focusable="true"
             android:backgroundTint="@color/main_color"
             android:textColor="@color/backgroud_color"
             android:background="@drawable/edittext_bkg" />
