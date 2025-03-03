@@ -54,6 +54,8 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
 
     }
 
+    // values in each field is being fetched from the request model
+
     @Override
     public void onBindViewHolder(@NonNull RequestViewHolder holder, int position) {
         RequestModel request = requestList.get(position);
@@ -69,6 +71,11 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
         holder.statusTextView.setText(request.getStatus());
 
         holder.passengerCountTextView.setText(request.getNoOfPassengers());
+
+        if(Integer.parseInt(request.getNoOfPassengers()) > 1)
+        {
+            holder.passenger_details_title.setVisibility(View.VISIBLE);
+        }
 
         holder.passengerLayout.removeAllViews();
 
@@ -100,22 +107,28 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
 
     private void updateRequestStatus(RequestModel request, TextView statusTextView, Chip approveChip) {
         if (request.getRequestId() == null || request.getEmpEmail() == null) {
-            Log.d("ARequest_id"," " + request.getRequestId());
             Toast.makeText(context, "Request details are incomplete.", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        //fetching the respective approver name of approval to store in the database.
+        // also fetch the userrole of approver to check whether its a functional head or HR head.
+        // if FH then the approval should be sent to HR for next approval.
 
         sheet1Ref.orderByChild("Official Email ID").equalTo(approverEmail).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String approverName = "Unknown Approver";
+                String approver_user_role = "Unknown";
 
                 if (snapshot.exists()) {
                     for (DataSnapshot data : snapshot.getChildren()) {
                         approverName = data.child("Employee Name").getValue(String.class);
+                        approver_user_role = data.child("Approval Matrix").getValue(String.class);
                         if (approverName != null) {
                             break;
                         }
+
                     }
                 } else {
                     Toast.makeText(context, "No matching record found", Toast.LENGTH_SHORT).show();
@@ -128,6 +141,7 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
                 }
 
                 final String finalApproverName = approverName;
+                final String finalApproverUserRole = approver_user_role;
 
                 notificationRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -144,10 +158,6 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
 
                             }
                             String dbRequesterEmail = requestSnapshot.child("requester_email").getValue(String.class);
-
-                            Log.d("RequestMatching", "Checking DB request ID: " + dbRequestId + " against Request ID: " + request.getRequestId());
-                            Log.d("RequestMatching", "Checking DB requester email: " + dbRequesterEmail + " against Requester email: " + request.getEmpEmail());
-
 
                             if (dbRequestId != null && request.getRequestId() != null &&
                                     dbRequestId.trim().equals(request.getRequestId().trim()) &&
@@ -181,7 +191,7 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
 
                                 String request_id = request.getRequestId();
 
-                                Log.d("ApprovalProcess", "Attempting to push approved request data: " + approvedRequestData.toString());
+                                //On click of approve the details are getting written to the table as well as the status field updation to approved on click of approve chip.
 
                                 approvedRequestsRef.child(request_id).setValue(approvedRequestData)
                                         .addOnCompleteListener(task -> {
@@ -236,7 +246,7 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
 
         TextView nameTextView, empIdTextView, empEmailTextView, pickupTextView,
                 dropoffTextView, dateTextView, timeTextView,
-                purposeTextView, statusTextView, passengerCountTextView;
+                purposeTextView, statusTextView, passengerCountTextView,passenger_details_title;
         Chip approveChip;
         ImageButton drop_down_button;
         LinearLayout detailsLayout, passengerLayout;
@@ -258,6 +268,7 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
             detailsLayout = itemView.findViewById(R.id.outer_layout);
             passengerCountTextView = itemView.findViewById(R.id.no_of_passengers_textview);
             passengerLayout = itemView.findViewById(R.id.passenger_container);
+            passenger_details_title =itemView.findViewById(R.id.passenger_details_title);
         }
 
     }

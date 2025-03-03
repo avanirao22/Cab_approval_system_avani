@@ -64,6 +64,8 @@ public class Pending_approvals extends AppCompatActivity {
         fetchPendingRequests();
     }
 
+    //in pending approvals we can see all the details along with employee details who requested the ride along with a approve chip on click of which the status gets changed from pending to approved.
+
     private void fetchPendingRequests() {
         notificationRef.orderByChild("approver_email").equalTo(approverEmail) // Filter by approver's email
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -160,44 +162,6 @@ public class Pending_approvals extends AppCompatActivity {
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
                         Toast.makeText(Pending_approvals.this, "Failed to fetch employee details.", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-
-    private void updateNotificationStatus(String requestId, String requesterEmail) {
-        notificationRef.orderByChild("request_id").equalTo(requestId)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        boolean recordFound = false;
-                        for (DataSnapshot requestSnapshot : snapshot.getChildren()) {
-                            String email = requestSnapshot.child("requester_email").getValue(String.class);
-
-                            // Check if the request_id and requester_email match
-                            if (email != null && email.equals(requesterEmail)) {
-                                requestSnapshot.getRef().child("status").setValue("approved")
-                                        .addOnCompleteListener(task -> {
-                                            if (task.isSuccessful()) {
-                                                Toast.makeText(Pending_approvals.this, "Notification updated successfully.", Toast.LENGTH_SHORT).show();
-                                            }
-                                        })
-                                        .addOnFailureListener(e -> {
-                                            Toast.makeText(Pending_approvals.this, "Failed to update notification status.", Toast.LENGTH_SHORT).show();
-                                        });
-                                recordFound = true;
-                                break;
-                            }
-                        }
-
-                        if (!recordFound) {
-                            Toast.makeText(Pending_approvals.this, "No matching record found for this request and email.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(Pending_approvals.this, "Error updating notification status.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

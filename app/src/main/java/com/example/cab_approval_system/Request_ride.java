@@ -55,6 +55,7 @@ public class Request_ride extends AppCompatActivity {
 
         initializeUI();
 
+        // methods for specific functionalities in UI
         setupDateTimePickers();
         setupCountButtons();
         setupToggleButton();
@@ -93,6 +94,7 @@ public class Request_ride extends AppCompatActivity {
         main_passenger_layout = findViewById(R.id.main_passenger_layout);
     }
 
+    // method to fetch time
     private void setupDateTimePickers() {
         time_picker_button.setOnClickListener(v -> {
             final Calendar c = Calendar.getInstance();
@@ -110,6 +112,7 @@ public class Request_ride extends AppCompatActivity {
             timePickerDialog.show();
         });
 
+        //method to fetch date
         date_picker_button.setOnClickListener(v -> {
             final Calendar c = Calendar.getInstance();
             int year = c.get(Calendar.YEAR);
@@ -123,6 +126,7 @@ public class Request_ride extends AppCompatActivity {
         });
     }
 
+    // A horizontal layout where increase and decrease button with a edit text in center to enter number of people for a particular ride. Functionalities of increase and decrease button is specified here.
     private void setupCountButtons() {
         increase_button.setOnClickListener(v -> {
             int currentCount = Integer.parseInt(people_count.getText().toString());
@@ -140,6 +144,11 @@ public class Request_ride extends AppCompatActivity {
             }
         });
     }
+
+    //on click of select toggle button the number selected in edit text gets displayed in a text view and the same will be used to display edit texts to enter passenger names.
+    //on click of change toggle button we can edit the number of passengers and again enter passenger names as per the number entered.
+    // calling a function to dynamically generate edit texts to enter passenger names as per number selected.
+    //managing the visibility of buttons and layouts as per the requirements.
 
     private void setupToggleButton() {
         select_toggle_button.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -173,8 +182,10 @@ public class Request_ride extends AppCompatActivity {
             }
         });
 
-        save_button.setOnClickListener(v -> {
+        //on click of save button the names entered in the edit texts gets saved and is viewed in a plane text.
+        // passenger names are stored in table under attribute name passengerNames as subfield.
 
+        save_button.setOnClickListener(v -> {
             StringBuilder passengerNames = new StringBuilder();
             boolean allFieldsFilled = true;
             int passengerIndex = 1; // To track correct numbering
@@ -211,6 +222,7 @@ public class Request_ride extends AppCompatActivity {
         });
     }
 
+//method to generate edit texts dynamically as per the number of passengers being selected.
 
     private void generateEditTexts(int numFields) {
         passenger_layout.removeAllViews(); // Ensure no leftover views
@@ -236,6 +248,7 @@ public class Request_ride extends AppCompatActivity {
         }
     }
 
+//on click of request button the entered details are being stored to request_details table and then is shown in pending request of specific approver.
 
     private void setupRequestButton() {
         request_button.setOnClickListener(v -> {
@@ -254,6 +267,10 @@ public class Request_ride extends AppCompatActivity {
             }
         });
     }
+
+    // saving the details to request_details on click of request button and auto increment of request_counter
+    //approver email is being fetched and also using fcm token sending notification to that specific approver for approval.
+    //the approver on logging in can see the pending approvals as a dot icon in their app.
 
     private void saveDetails(String pickupLocation, String dropoffLocation, String time, String date, String purpose, String no_of_passengers, String email, Map<String, String> passengerNames) {
         FirebaseDatabase database = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app");
