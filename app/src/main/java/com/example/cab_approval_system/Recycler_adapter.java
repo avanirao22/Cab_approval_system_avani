@@ -68,8 +68,6 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
         holder.purposeTextView.setText(request.getPurpose());
         holder.statusTextView.setText(request.getStatus());
 
-        Log.d("Emp_ID"," " + request.getEmpEmail());
-
         holder.passengerCountTextView.setText(request.getNoOfPassengers());
 
         holder.passengerLayout.removeAllViews();
@@ -97,18 +95,12 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
             }
         });
 
-        holder.approveChip.setOnClickListener(v -> {
-            if (request.getRequestId() == null || request.getEmpEmail() == null) {
-                Toast.makeText(context, "Request details are incomplete.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            updateRequestStatus(request, holder.statusTextView, holder.approveChip);
-        });
+        holder.approveChip.setOnClickListener(v -> updateRequestStatus(request, holder.statusTextView, holder.approveChip));
     }
 
     private void updateRequestStatus(RequestModel request, TextView statusTextView, Chip approveChip) {
         if (request.getRequestId() == null || request.getEmpEmail() == null) {
+            Log.d("ARequest_id"," " + request.getRequestId());
             Toast.makeText(context, "Request details are incomplete.", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -153,17 +145,17 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
                             }
                             String dbRequesterEmail = requestSnapshot.child("requester_email").getValue(String.class);
 
+                            Log.d("RequestMatching", "Checking DB request ID: " + dbRequestId + " against Request ID: " + request.getRequestId());
+                            Log.d("RequestMatching", "Checking DB requester email: " + dbRequesterEmail + " against Requester email: " + request.getEmpEmail());
+
+
                             if (dbRequestId != null && request.getRequestId() != null &&
-                                    (dbRequestId.trim()).equals(request.getRequestId().trim()) &&
+                                    dbRequestId.trim().equals(request.getRequestId().trim()) &&
                                     dbRequesterEmail != null && request.getEmpEmail() != null &&
                                     dbRequesterEmail.trim().equalsIgnoreCase(request.getEmpEmail().trim())) {
 
-                                Log.d("Emp_ID1"," " + request.getRequestId());
-                                Log.d("Emp_ID1"," " + dbRequestId);
-                                Log.d("Emp_ID1"," " + request.getEmpEmail());
-                                Log.d("Emp_ID1"," " + dbRequesterEmail);
-
-                                DatabaseReference approvedRequestsRef = FirebaseDatabase.getInstance().getReference("Approved_requests");
+                                DatabaseReference approvedRequestsRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
+                                        .getReference("Approved_requests");
 
                                 Map<String, Object> approvedRequestData = new HashMap<>();
                                 String formattedTime = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
@@ -178,42 +170,35 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
                                 approvedRequestData.put("Emp_email", request.getEmpEmail());
                                 approvedRequestData.put("Source", request.getPickupLocation());
                                 approvedRequestData.put("Purpose", request.getPurpose());
-                                approvedRequestData.put("Request_id", Integer.parseInt(request.getRequestId()));
+                                approvedRequestData.put("Request_id", request.getRequestId());
                                 approvedRequestData.put("Status", "Approved");
                                 approvedRequestData.put("Time", request.getTime());
                                 approvedRequestData.put("no_of_passengers", request.getNoOfPassengers());
 
-
                                 if (request.getPassengerMap() != null) {
-
                                     approvedRequestData.put("passengerNames", request.getPassengerMap());
-
-                                  // coming inside fetching passenger names
                                 }
 
                                 String request_id = request.getRequestId();
 
-                                approvedRequestsRef.push().setValue(approvedRequestData)
-                                        .addOnCompleteListener(task -> {
+                                Log.d("ApprovalProcess", "Attempting to push approved request data: " + approvedRequestData.toString());
 
-                                            Log.d("RecyclerAdapter4", " " + request_id);
+                                approvedRequestsRef.child(request_id).setValue(approvedRequestData)
+                                        .addOnCompleteListener(task -> {
+                                            Log.d("Approve"," "+ request_id);
                                             if (task.isSuccessful()) {
-                                                Log.d("RecyclerAdapter3", " " + request_id);
                                                 // Remove the request from the Notification table
                                                 requestSnapshot.getRef().removeValue()
                                                         .addOnCompleteListener(removeTask -> {
                                                             if (removeTask.isSuccessful()) {
-                                                                Log.d("RecyclerAdapter5", " " + requestSnapshot.getRef());
                                                                 Toast.makeText(context, "Request approved", Toast.LENGTH_SHORT).show();
                                                                 statusTextView.setText("Approved ✅");
-                                                                Log.d("RecyclerAdapter12", "recordFound: " + statusTextView);
                                                                 approveChip.setVisibility(View.GONE);
                                                             } else {
                                                                 Toast.makeText(context, "Failed to remove request from pending list.", Toast.LENGTH_SHORT).show();
                                                             }
                                                         });
                                             } else {
-
                                                 Toast.makeText(context, "Failed to move request to ApprovedRequests.", Toast.LENGTH_SHORT).show();
                                             }
                                         });
@@ -221,6 +206,7 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
                                 break;
                             }
                         }
+
                         if (!recordFound) {
 
                             Toast.makeText(context, "No matching record found for this request and email.", Toast.LENGTH_SHORT).show();
@@ -276,4 +262,3 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
 
     }
 }
-
