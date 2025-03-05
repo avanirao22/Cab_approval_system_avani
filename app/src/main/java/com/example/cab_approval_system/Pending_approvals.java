@@ -2,6 +2,7 @@ package com.example.cab_approval_system;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -38,6 +39,7 @@ public class Pending_approvals extends AppCompatActivity {
         Intent intent = getIntent();
         String passedEmail = intent.getStringExtra("email");
         String userRole = intent.getStringExtra("userRole");
+        ImageView notificationDot = Home_page.getNotificationDot();
 
         recyclerView = findViewById(R.id.pending_approvals_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -51,7 +53,7 @@ public class Pending_approvals extends AppCompatActivity {
 
         requestList = new ArrayList<>();
         requestMap = new HashMap<>();
-        recyclerAdapter = new Recycler_adapter(this, requestList,approverEmail,userRole);
+        recyclerAdapter = new Recycler_adapter(this, requestList,approverEmail,userRole,notificationDot);
         recyclerView.setAdapter(recyclerAdapter);
 
         requestRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")

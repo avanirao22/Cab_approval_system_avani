@@ -20,6 +20,12 @@ public class RequestModel {
     private String approverEmail;
     private Map<String, String> passengerMap;
     private String noOfPassengers;
+    private String pendingStatus;
+    private String requestSubmissionTime;
+    private boolean approvedByHR;
+    private boolean approvedByFH;
+    private String Approved_FH_name;
+    private String Approved_FH_email;
 
     public RequestModel() {
         // Default constructor required for Firebase
@@ -121,12 +127,12 @@ public class RequestModel {
         this.status = status;
     }
 
-    @PropertyName("Request_id")
+    @PropertyName("request_id")
     public String getRequestId() {
         return requestId;
     }
 
-    @PropertyName("Request_id")
+    @PropertyName("request_id")
     public void setRequestId(Object requestId) {
         if (requestId instanceof Long) {
             this.requestId = String.valueOf(requestId);
@@ -186,4 +192,65 @@ public class RequestModel {
     public void setNoOfPassengers(String noOfPassengers) {
         this.noOfPassengers = noOfPassengers;
     }
+
+    @PropertyName("Pending")
+    public String getPendingStatus() {
+        return pendingStatus;
+    }
+
+    @PropertyName("Pending")
+    public void setPendingStatus(String pendingStatus) {
+        this.pendingStatus = pendingStatus;
+    }
+
+    @PropertyName("Request_submission_time")
+    public String getRequestSubmissionTime() {
+        return requestSubmissionTime;
+    }
+
+    @PropertyName("Request_submission_time")
+    public void setRequestSubmissionTime(String requestSubmissionTime) {
+        this.requestSubmissionTime = requestSubmissionTime;
+    }
+
+    @PropertyName("Approved_by_HR")
+    public boolean isApprovedByHR() {
+        return approvedByHR;
+    }
+
+    @PropertyName("Approved_by_HR")
+    public void setApprovedByHR(boolean approvedByHR) {
+        this.approvedByHR = approvedByHR;
+    }
+
+    @PropertyName("ApprovedByFH")
+    public boolean isApprovedByFH() {
+        return approvedByFH;
+    }
+
+    @PropertyName("ApprovedByFH")
+    public void setApprovedByFH(boolean approvedByFH) {
+        this.approvedByFH = approvedByFH;
+    }
+
+    @PropertyName("Approved_FH_name")
+    public String getApprovedFHName() {
+        return Approved_FH_name;
+    }
+
+    @PropertyName("Approved_FH_name")
+    public void setApprovedFHName(String approvedFHName) {
+        this.Approved_FH_name = approvedFHName;
+    }
+
+    @PropertyName("Approved_FH_email")
+    public String getApprovedFHEmail() {
+        return Approved_FH_email;
+    }
+
+    @PropertyName("Approved_FH_email")
+    public void setApprovedFHEmail(String approvedFHEmail) {
+        this.Approved_FH_email = approvedFHEmail;
+    }
+
 }

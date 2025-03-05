@@ -318,7 +318,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintTop_toBottomOf="@id/layout10"
-            app:layout_constraintBottom_toTopOf="@id/approve_chip">
+            app:layout_constraintBottom_toTopOf="@id/layout12">
 
             <TextView
                 android:layout_width="120dp"
@@ -340,11 +340,126 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/layout12"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/layout11"
+            app:layout_constraintBottom_toTopOf="@id/layout13">
+
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Approved FH Name:"
+                android:textColor="@color/text_color"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/approvedFHname_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Approved FH"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="10dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout13"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/layout12"
+            app:layout_constraintBottom_toTopOf="@id/layout14">
+
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Approved FH Email:"
+                android:textColor="@color/text_color"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/approvedFHemail_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Approved Email"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="10dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout14"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/layout13"
+            app:layout_constraintBottom_toTopOf="@id/layout15">
+
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="FH Approved Time:"
+                android:textColor="@color/text_color"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/FHApprovedTime_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Approved Time"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="10dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout15"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/layout11"
+            app:layout_constraintBottom_toTopOf="@id/approve_chip">
+
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:text="Pending:"
+                android:textColor="@color/text_color"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/pending_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="HR Approval Pending"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="10dp" />
+
+        </LinearLayout>
+
         <com.google.android.material.chip.Chip
             android:id="@+id/approve_chip"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/layout9"
+            app:layout_constraintTop_toBottomOf="@id/layout12"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginTop="8dp"
             android:text="Approve"

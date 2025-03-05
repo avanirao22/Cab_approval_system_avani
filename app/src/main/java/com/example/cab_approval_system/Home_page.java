@@ -18,7 +18,7 @@ public class Home_page extends AppCompatActivity {
 
     private TextView emp_Name, empID, empTeam;
     private DatabaseReference databaseReference;
-    private ImageView notificationDot; // Notification dot
+    private static ImageView notificationDot; // Notification dot
     private String user_email, user_role;
 
     @Override
@@ -79,10 +79,15 @@ public class Home_page extends AppCompatActivity {
         });
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
         fetchUserRoleAndUpdateUI(); // Fetch updated role and set visibility
+    }
+
+    public static ImageView getNotificationDot() {
+        return notificationDot;
     }
 
     private void fetchUserRoleAndUpdateUI() {

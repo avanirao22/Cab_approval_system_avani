@@ -21,6 +21,6 @@ public class Loading_page extends AppCompatActivity {
             startActivity(intent);
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             finish(); // Finish the current activity to prevent going back to it
-        }, 1000); // 5000 milliseconds = 5 seconds
+        }, 100); // 5000 milliseconds = 5 seconds
     }
 }
