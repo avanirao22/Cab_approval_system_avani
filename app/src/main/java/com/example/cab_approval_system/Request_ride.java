@@ -361,7 +361,7 @@ public class Request_ride extends AppCompatActivity {
                                                 fetchApproverToken(approverEmail, token -> {
                                                     if (token != null) {
                                                         sendPushNotification();
-                                                        sendFCMNotification(finalNewId, token);
+                                                        FCMHelper.sendFCMNotification(this.getBaseContext(),token,approverEmail,"title","message");
                                                         saveNotificationData(finalNewId, approverEmail); // Save notification data
                                                     } else {
                                                         Toast.makeText(Request_ride.this, "Approver FCM token not found", Toast.LENGTH_SHORT).show();
@@ -406,11 +406,11 @@ public class Request_ride extends AppCompatActivity {
         void onTokenFetched(String token);
     }
 
-    private void sendFCMNotification(int requestId, String token) {
+    /*private void sendFCMNotification(int requestId, String token) {
         String message = "A new ride request has been submitted with ID: " + requestId;
         // Send notification via FCM (Actual FCM logic should be added here)
         Log.d("FCM", "Sending notification to token: " + token + " with message: " + message);
-    }
+    }*/
 
     private void saveNotificationData(int requestId, String approverEmail) {
         DatabaseReference notificationRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")

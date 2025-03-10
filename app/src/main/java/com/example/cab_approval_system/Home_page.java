@@ -18,6 +18,7 @@ import android.widget.Toast;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,6 +26,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -79,6 +82,8 @@ public class Home_page extends AppCompatActivity {
         } else {
             Toast.makeText(this, "No email provided", Toast.LENGTH_SHORT).show();
         }
+        // FCM Notifications
+        listenForNotifications();
 
         // Button click listeners
         request_ride.setOnClickListener(v -> {
@@ -100,49 +105,7 @@ public class Home_page extends AppCompatActivity {
             startActivity(i);
         });
 
-        String requestId = "30";
-        Query query = notificationRef.orderByChild("request_id").equalTo(requestId);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
-                    // Get the notification ID (unique key)
-                    String notificationId = childSnapshot.getKey();
 
-                    // Extract details
-                    String title = childSnapshot.child("title").getValue(String.class);
-                    String message = childSnapshot.child("message").getValue(String.class);
-
-                    Log.d("Notification", "Found: " + notificationId);
-                    showNotification(title, message);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Log.e("Firebase", "Error: " + error.getMessage());
-            }
-        });
-
-    }
-    //show notif
-    private void showNotification(String title, String message) {
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "my_channel")
-                .setSmallIcon(R.drawable.ic_notification)  // Ensure you have a valid icon
-                .setContentTitle(title)
-                .setContentText(message)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setDefaults(NotificationCompat.DEFAULT_ALL)
-                .setAutoCancel(true);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
-            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 101);
-                return; // Stop execution until permission is granted
-            }
-        }
     }
 
     //new function for androidx notifications. created on 9th march
@@ -169,6 +132,36 @@ public class Home_page extends AppCompatActivity {
             notificationManager.createNotificationChannel(channel);
         }
     }
+    private void listenForNotifications() {
+        DatabaseReference notificationsRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("Notification");
+
+        notificationsRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                if (snapshot.exists()) {
+                    String approverEmail = snapshot.child("approver_email").getValue(String.class);
+                    String message = snapshot.child("message").getValue(String.class);
+
+                    if (approverEmail != null && message != null) {
+                        FCMHelper.sendFCMNotification(getApplicationContext(), approverEmail, "", "New Ride Request", message);
+                    }
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {}
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {}
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {}
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Firebase", "Notification listener failed: " + error.getMessage());
+            }
+        });
+    }
+
+
 
 
     @Override
