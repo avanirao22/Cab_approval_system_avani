@@ -1,7 +1,17 @@
 package com.example.cab_approval_system;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.media.AudioAttributes;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -9,17 +19,24 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 public class Home_page extends AppCompatActivity {
 
     private TextView emp_Name, empID, empTeam;
-    private DatabaseReference databaseReference;
+    private DatabaseReference databaseReference, notificationRef;
     private static ImageView notificationDot; // Notification dot
     private String user_email, user_role;
+    private static final String CHANNEL_ID = "1001";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +66,11 @@ public class Home_page extends AppCompatActivity {
         // Initialize Firebase reference
         databaseReference = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
                 .getReference("Sheet1");
+        //notification ref
+        notificationRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("Notification/user123");
+
+        //instantiate notification channel
+        createNotificationChannel();
 
         // Fetch user data & notifications
         if (user_email != null) {
@@ -77,6 +99,75 @@ public class Home_page extends AppCompatActivity {
             i.putExtra("email", user_email);
             startActivity(i);
         });
+
+        String requestId = "30";
+        Query query = notificationRef.orderByChild("request_id").equalTo(requestId);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
+                    // Get the notification ID (unique key)
+                    String notificationId = childSnapshot.getKey();
+
+                    // Extract details
+                    String title = childSnapshot.child("title").getValue(String.class);
+                    String message = childSnapshot.child("message").getValue(String.class);
+
+                    Log.d("Notification", "Found: " + notificationId);
+                    showNotification(title, message);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e("Firebase", "Error: " + error.getMessage());
+            }
+        });
+
+    }
+    //show notif
+    private void showNotification(String title, String message) {
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "my_channel")
+                .setSmallIcon(R.drawable.ic_notification)  // Ensure you have a valid icon
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .setAutoCancel(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 101);
+                return; // Stop execution until permission is granted
+            }
+        }
+    }
+
+    //new function for androidx notifications. created on 9th march
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Ride_request";
+            String description = "Notification for approval of ride request";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            channel.enableLights(true);
+            channel.enableVibration(true);
+            channel.setLightColor(Color.BLUE);
+            channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+
+            Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .build();
+            channel.setSound(soundUri, audioAttributes);
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
 

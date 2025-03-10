@@ -9,12 +9,12 @@ android {
         exclude 'META-INF/LICENSE.md'
     }
     namespace 'com.example.cab_approval_system'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.example.cab_approval_system"
-        minSdk 24
-        targetSdk 34
+        minSdk 28
+        targetSdk 35
         versionCode 1
         versionName "1.0"
 
@@ -39,6 +39,7 @@ android {
 dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation "androidx.core:core-ktx:1.15.0"
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation libs.material
     implementation libs.activity

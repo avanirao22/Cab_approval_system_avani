@@ -1,7 +1,13 @@
 package com.example.cab_approval_system;
 
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -23,6 +29,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
 import java.text.SimpleDateFormat;
@@ -46,6 +55,7 @@ public class Request_ride extends AppCompatActivity {
     private LinearLayout passenger_layout, main_passenger_layout;
     private int passenger_count;
     Map<String, String> passengerMap = new HashMap<>();
+    private static final int CHANNEL_ID = 1001;
 
 
     @Override
@@ -71,6 +81,57 @@ public class Request_ride extends AppCompatActivity {
         FirebaseApp.initializeApp(this);
 
     }
+    private void sendPushNotification() {
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, String.valueOf(CHANNEL_ID)) // Use CHANNEL_ID directly
+                .setSmallIcon(R.drawable.ic_notification)  // Make sure this exists in res/drawable
+                .setContentTitle("Ride Request Submitted")
+                .setContentText("Your ride request has been successfully submitted.")
+                .setPriority(NotificationCompat.PRIORITY_HIGH) // Ensures heads-up notification
+                .setDefaults(NotificationCompat.DEFAULT_ALL) // Enables sound, vibration, etc.
+                .setSound(soundUri) // Ensures sound is set
+                .setAutoCancel(true)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+        // Request notification permission on Android 13+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 101);
+                return; // Stop execution until permission is granted
+            }
+        }
+
+        notificationManager.notify(1, builder.build());
+    }
+
+
+    /*public void sendNotification() {
+        // Create an explicit intent for an Activity in your app
+        Intent intent = new Intent(this, Request_ride.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, String.valueOf(CHANNEL_ID))
+                .setSmallIcon(R.drawable.notification_icon) // Ensure this icon exists in res/drawable
+                .setContentTitle("New approval request!")
+                .setContentText("Employee 1")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+        // Check for notification permission on Android 13+ (API 33+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1);
+            return;
+        }
+
+        notificationManager.notify(1001, builder.build()); // Unique notification ID
+    }*/
 
     private void initializeUI() {
         time_picker_button = findViewById(R.id.time_picker_button);
@@ -216,6 +277,8 @@ public class Request_ride extends AppCompatActivity {
                         .addOnSuccessListener(aVoid -> Log.d("Firebase", "Passenger names saved successfully"))
                         .addOnFailureListener(e -> Log.e("Firebase", "Failed to save passenger names", e));
 
+
+
             } else {
                 Toast.makeText(Request_ride.this, "Enter all passenger names", Toast.LENGTH_SHORT).show();
             }
@@ -297,6 +360,7 @@ public class Request_ride extends AppCompatActivity {
                                             if (approverEmail != null) {
                                                 fetchApproverToken(approverEmail, token -> {
                                                     if (token != null) {
+                                                        sendPushNotification();
                                                         sendFCMNotification(finalNewId, token);
                                                         saveNotificationData(finalNewId, approverEmail); // Save notification data
                                                     } else {
