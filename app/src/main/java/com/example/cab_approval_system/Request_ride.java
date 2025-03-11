@@ -81,57 +81,7 @@ public class Request_ride extends AppCompatActivity {
         FirebaseApp.initializeApp(this);
 
     }
-    private void sendPushNotification() {
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, String.valueOf(CHANNEL_ID)) // Use CHANNEL_ID directly
-                .setSmallIcon(R.drawable.ic_notification)  // Make sure this exists in res/drawable
-                .setContentTitle("Ride Request Submitted")
-                .setContentText("Your ride request has been successfully submitted.")
-                .setPriority(NotificationCompat.PRIORITY_HIGH) // Ensures heads-up notification
-                .setDefaults(NotificationCompat.DEFAULT_ALL) // Enables sound, vibration, etc.
-                .setSound(soundUri) // Ensures sound is set
-                .setAutoCancel(true)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-
-        // Request notification permission on Android 13+
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
-            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 101);
-                return; // Stop execution until permission is granted
-            }
-        }
-
-        notificationManager.notify(1, builder.build());
-    }
-
-
-    /*public void sendNotification() {
-        // Create an explicit intent for an Activity in your app
-        Intent intent = new Intent(this, Request_ride.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, String.valueOf(CHANNEL_ID))
-                .setSmallIcon(R.drawable.notification_icon) // Ensure this icon exists in res/drawable
-                .setContentTitle("New approval request!")
-                .setContentText("Employee 1")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true);
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-
-        // Check for notification permission on Android 13+ (API 33+)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1);
-            return;
-        }
-
-        notificationManager.notify(1001, builder.build()); // Unique notification ID
-    }*/
 
     private void initializeUI() {
         time_picker_button = findViewById(R.id.time_picker_button);
@@ -360,9 +310,7 @@ public class Request_ride extends AppCompatActivity {
                                             if (approverEmail != null) {
                                                 fetchApproverToken(approverEmail, token -> {
                                                     if (token != null) {
-                                                        sendPushNotification();
-                                                        FCMHelper.sendFCMNotification(this.getBaseContext(),token,approverEmail,"title","message");
-                                                        saveNotificationData(finalNewId, approverEmail); // Save notification data
+                                                        saveNotificationData(finalNewId,token, approverEmail); // Save notification data
                                                     } else {
                                                         Toast.makeText(Request_ride.this, "Approver FCM token not found", Toast.LENGTH_SHORT).show();
                                                     }
@@ -406,13 +354,8 @@ public class Request_ride extends AppCompatActivity {
         void onTokenFetched(String token);
     }
 
-    /*private void sendFCMNotification(int requestId, String token) {
-        String message = "A new ride request has been submitted with ID: " + requestId;
-        // Send notification via FCM (Actual FCM logic should be added here)
-        Log.d("FCM", "Sending notification to token: " + token + " with message: " + message);
-    }*/
 
-    private void saveNotificationData(int requestId, String approverEmail) {
+    private void saveNotificationData(int requestId,String token, String approverEmail) {
         DatabaseReference notificationRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
                 .getReference("Notification");
 
@@ -430,7 +373,8 @@ public class Request_ride extends AppCompatActivity {
         notificationData.put("title", "Ride Request Pending");
         notificationData.put("requester_email",email_id);
 
-        Log.d("ARequest_id"," " + requestId);
+        Log.d("Request_id"," " + requestId);
+        FCMHelper.sendFCMNotification(this.getBaseContext(),token,email_id,approverEmail, "New Request",message,formattedTime);
 
         notificationRef.push().setValue(notificationData)
                 .addOnSuccessListener(aVoid -> Log.d("Notification", "Notification saved successfully"))

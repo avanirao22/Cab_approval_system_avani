@@ -18,6 +18,8 @@ import android.widget.Toast;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -46,7 +48,6 @@ public class Home_page extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
 
-        // Get user details from intent
         user_email = getIntent().getStringExtra("email");
         user_role = getIntent().getStringExtra("userRole");
 
@@ -82,8 +83,6 @@ public class Home_page extends AppCompatActivity {
         } else {
             Toast.makeText(this, "No email provided", Toast.LENGTH_SHORT).show();
         }
-        // FCM Notifications
-        listenForNotifications();
 
         // Button click listeners
         request_ride.setOnClickListener(v -> {
@@ -132,37 +131,6 @@ public class Home_page extends AppCompatActivity {
             notificationManager.createNotificationChannel(channel);
         }
     }
-    private void listenForNotifications() {
-        DatabaseReference notificationsRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app").getReference("Notification");
-
-        notificationsRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                if (snapshot.exists()) {
-                    String approverEmail = snapshot.child("approver_email").getValue(String.class);
-                    String message = snapshot.child("message").getValue(String.class);
-
-                    if (approverEmail != null && message != null) {
-                        FCMHelper.sendFCMNotification(getApplicationContext(), approverEmail, "", "New Ride Request", message);
-                    }
-                }
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {}
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {}
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {}
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("Firebase", "Notification listener failed: " + error.getMessage());
-            }
-        });
-    }
-
-
-
 
     @Override
     protected void onResume() {

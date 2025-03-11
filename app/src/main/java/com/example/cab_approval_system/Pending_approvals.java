@@ -2,6 +2,7 @@ package com.example.cab_approval_system;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -10,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,7 +31,9 @@ public class Pending_approvals extends AppCompatActivity {
     private List<RequestModel> requestList;
     private Map<String, RequestModel> requestMap;
     private DatabaseReference requestRef, notificationRef, sheetRef;
-    private String approverEmail,passedEmail,userRole;
+    private String approverEmail,requester_email,userRole;
+    private static final String TAG = "Pending_approvals";
+    private DatabaseReference userRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +41,11 @@ public class Pending_approvals extends AppCompatActivity {
         setContentView(R.layout.activity_pending_approvals);
 
 
+        //user role and email through intent
         Intent intent = getIntent();
-        String passedEmail = intent.getStringExtra("email");
-        String userRole = intent.getStringExtra("userRole");
+        requester_email = intent.getStringExtra("email");
+        userRole = intent.getStringExtra("userRole");
+        Log.d("Pending_approvals_role",userRole);
         ImageView notificationDot = Home_page.getNotificationDot();
 
         recyclerView = findViewById(R.id.pending_approvals_recyclerview);
@@ -48,7 +55,7 @@ public class Pending_approvals extends AppCompatActivity {
 
 
         if ("HR Head".equals(userRole) || "FH".equals(userRole)) {
-            approverEmail =passedEmail;
+            approverEmail =requester_email;
         }
 
         requestList = new ArrayList<>();

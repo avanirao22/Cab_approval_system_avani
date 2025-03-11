@@ -143,8 +143,80 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
         // Approve Button Click Listener
         holder.approve_button.setOnClickListener(v -> {
             Log.d("ApproveClick", "Approve button clicked for request: " + request.getRequestId());
-            approveRequest(request, holder.statusTextView, holder.approve_button,holder.reject_button, holder.approved_display_textView, holder.reject_display_textView);
+
+            // Approve the request
+            approveRequest(request, holder.statusTextView, holder.approve_button, holder.reject_button, holder.approved_display_textView, holder.reject_display_textView);
+
+            // 🔹 Step 1: Fetch Employee's Approver Email from Sheet1
+            sheet1Ref.orderByChild("Official Email ID").equalTo(request.getEmpEmail()).get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && task.getResult().exists()) {
+                            for (DataSnapshot snapshot : task.getResult().getChildren()) {
+                                String approverEmail = snapshot.child("Email ID of Approver").getValue(String.class);
+
+                                if (approverEmail != null) {
+                                    Log.d("Approver Email", approverEmail);
+
+                                    // 🔹 Step 2: Fetch the Approver's Record to Get Their Approval Matrix
+                                    sheet1Ref.orderByChild("Official Email ID").equalTo(approverEmail).get()
+                                            .addOnCompleteListener(approverTask -> {
+                                                if (approverTask.isSuccessful() && approverTask.getResult().exists()) {
+                                                    for (DataSnapshot approverSnapshot : approverTask.getResult().getChildren()) {
+                                                        String approverMatrix = approverSnapshot.child("Approval Matrix").getValue(String.class);
+
+                                                        if (approverMatrix != null) {
+                                                            Log.d("Approver's Approval Matrix", approverMatrix);
+
+                                                            // 🔹 Step 3: Only Send Notification if the Approver is FH
+                                                            if (approverMatrix.equals("FH")) {
+                                                                // 🔹 Convert email to Firebase key format (replace '.' and '@' with ',')
+                                                                String emailKey = approverEmail.replace(".", ",");
+
+                                                                // 🔹 Fetch HR's FCM Token from Registration_data
+                                                                DatabaseReference tokenRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
+                                                                        .getReference("Registration_data").child(emailKey).child("fcm_token");
+
+                                                                tokenRef.get().addOnCompleteListener(tokenTask -> {
+                                                                    if (tokenTask.isSuccessful() && tokenTask.getResult().exists()) {
+                                                                        String hrFCMToken = tokenTask.getResult().getValue(String.class);
+                                                                        if (hrFCMToken != null) {
+                                                                            // 🔹 Prepare Notification Message
+                                                                            String title = "New Approval Request";
+                                                                            String message = "A new cab request has been approved by FH and is pending your approval.";
+                                                                            String requestedTime = request.getTime();
+
+                                                                            // 🔹 Send Notification to HR
+                                                                            FCMHelper.sendFCMNotification(context, hrFCMToken, request.getEmpEmail(), approverEmail, title, message, requestedTime);
+                                                                        } else {
+                                                                            Log.e("FCMHelper", "❌ HR FCM Token is null.");
+                                                                        }
+                                                                    } else {
+                                                                        Log.e("FCMHelper", "❌ Failed to fetch HR's FCM Token.");
+                                                                    }
+                                                                });
+                                                            } else {
+                                                                Log.d("Approval Flow", "Approver is not FH, skipping notification.");
+                                                            }
+                                                        } else {
+                                                            Log.e("Firebase", "❌ Approver's Approval Matrix is null.");
+                                                        }
+                                                    }
+                                                } else {
+                                                    Log.e("Firebase", "❌ No matching approver record found in Sheet1.");
+                                                }
+                                            });
+                                } else {
+                                    Log.e("Firebase", "❌ Approver Email is null.");
+                                }
+                            }
+                        } else {
+                            Log.e("Firebase", "❌ No matching employee record found in Sheet1.");
+                        }
+                    });
         });
+
+
+
     }
 
     private void approveRequest(RequestModel request, TextView statusTextView, ImageButton approve_button, ImageButton reject_button, TextView approved_display_textView, TextView reject_display_textView) {
@@ -248,22 +320,25 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
                                                                 approvedData.put("Approved_HR_email", approverEmail);
                                                                 approvedData.put("approvedByFH", false);
 
-                                                            } else if (finalApproverRole.equals("FH")) {
-                                                                // Normal Flow: FH Approval First
-                                                                approvedData.put("Status", "Approved by FH");
-                                                                approvedData.put("Pending", "HR approval pending");
-                                                                approvedData.put("Approved_FH_name", finalApproverName);
-                                                                approvedData.put("Approved_FH_email", approverEmail);
-                                                                approvedData.put("approvedByFH", true);
                                                             } else {
-                                                                // HR Final Approval
-                                                                approvedData.put("HR_Approved_Time",new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).format(new Date()));
-                                                                approvedData.put("Status", "Ride approved successfully");
-                                                                approvedData.put("approvedByFH", false);
-                                                                approvedData.put("Approved_FH_name", request.getApprovedFHName());
-                                                                approvedData.put("Approved_FH_email", request.getApprovedFHEmail());
-                                                                approvedData.put("Approved_HR_name", finalApproverName);
-                                                                approvedData.put("Approved_HR_email", approverEmail);
+                                                                assert finalApproverRole != null;
+                                                                if (finalApproverRole.equals("FH")) {
+                                                                    // Normal Flow: FH Approval First
+                                                                    approvedData.put("Status", "Approved by FH");
+                                                                    approvedData.put("Pending", "HR approval pending");
+                                                                    approvedData.put("Approved_FH_name", finalApproverName);
+                                                                    approvedData.put("Approved_FH_email", approverEmail);
+                                                                    approvedData.put("approvedByFH", true);
+                                                                } else {
+                                                                    // HR Final Approval
+                                                                    approvedData.put("HR_Approved_Time",new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).format(new Date()));
+                                                                    approvedData.put("Status", "Ride approved successfully");
+                                                                    approvedData.put("approvedByFH", false);
+                                                                    approvedData.put("Approved_FH_name", request.getApprovedFHName());
+                                                                    approvedData.put("Approved_FH_email", request.getApprovedFHEmail());
+                                                                    approvedData.put("Approved_HR_name", finalApproverName);
+                                                                    approvedData.put("Approved_HR_email", approverEmail);
+                                                                }
                                                             }
 
                                                             destinationRef.child(request.getRequestId()).setValue(approvedData)
