@@ -130,19 +130,24 @@ public class History_adapter extends RecyclerView.Adapter<History_adapter.Histor
         if (approvedRequestList != null && !approvedRequestList.isEmpty()) {
             SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
 
-            Collections.sort(approvedRequestList, new Comparator<RequestModel>() {
-                @Override
-                public int compare(RequestModel r1, RequestModel r2) {
-                    try {
-                        Date date1 = dateTimeFormat.parse(r1.getHRApprovedTime());
-                        Date date2 = dateTimeFormat.parse(r2.getHRApprovedTime());
-
-                        // Compare in descending order (latest first)
-                        return date2.compareTo(date1);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                        return 0; // If parsing fails, keep the original order
+            approvedRequestList.sort((r1, r2) -> {
+                try {
+                    Date date1,date2;
+                    if(r1.getHRApprovedTime()!=null && r2.getHRApprovedTime()!=null)
+                    {
+                        date1 = dateTimeFormat.parse(r1.getHRApprovedTime());
+                        date2 = dateTimeFormat.parse(r2.getHRApprovedTime());
                     }
+                    else
+                    {
+                        date1 = dateTimeFormat.parse(r1.getFH_Approved_Time());
+                        date2 = dateTimeFormat.parse(r2.getFH_Approved_Time());
+                    }
+                    // Compare in descending order (latest first)
+                    return date2.compareTo(date1);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    return 0; // If parsing fails, keep the original order
                 }
             });
         }

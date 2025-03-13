@@ -26,8 +26,8 @@ public class FCMListener extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        if (remoteMessage.getData().size() > 0) {
-            Log.d("FCM", "Data Payload: " + remoteMessage.getData());
+        if (!remoteMessage.getData().isEmpty()) {
+            Log.d(TAG, "Data Payload: " + remoteMessage.getData());
 
             // Safely retrieve notification data
             String title = remoteMessage.getNotification() != null ? remoteMessage.getNotification().getTitle() : "New Notification";

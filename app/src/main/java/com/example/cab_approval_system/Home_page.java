@@ -3,6 +3,7 @@ package com.example.cab_approval_system;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -35,6 +36,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import java.util.Objects;
+
+import me.leolin.shortcutbadger.ShortcutBadger;
+
 public class Home_page extends AppCompatActivity {
 
     private TextView emp_Name, empID, empTeam;
@@ -51,13 +56,16 @@ public class Home_page extends AppCompatActivity {
         user_email = getIntent().getStringExtra("email");
         user_role = getIntent().getStringExtra("userRole");
 
-        Home_Screen.setupBottomNavigation(this, user_email,user_role);
+        Home_Screen.setupBottomNavigation(this, user_email, user_role);
 
         // Initialize UI elements
         emp_Name = findViewById(R.id.emp_name_fetch);
         empID = findViewById(R.id.emp_id_edit_text);
         empTeam = findViewById(R.id.emp_team_edit_text);
         notificationDot = findViewById(R.id.notification_dot);
+
+        if (user_role.equals("Employee"))
+            notificationDot.setVisibility(View.GONE);
 
         // Initialize buttons
         ImageButton request_ride = findViewById(R.id.request_ride);
@@ -206,6 +214,8 @@ public class Home_page extends AppCompatActivity {
     private void checkForUnreadNotifications(String approverEmail) {
         DatabaseReference notificationsRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
                 .getReference("Notification");
+        DatabaseReference approvedByFHRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
+                .getReference("Approved_by_FH");
 
         notificationsRef.orderByChild("approver_email").equalTo(approverEmail)
                 .addValueEventListener(new com.google.firebase.database.ValueEventListener() {
@@ -221,6 +231,7 @@ public class Home_page extends AppCompatActivity {
                         }
                         if (notificationDot != null) {
                             notificationDot.setVisibility(hasUnreadNotifications ? View.VISIBLE : View.GONE);
+                            setBadgeCount(1);
                         }
                     }
 
@@ -229,5 +240,35 @@ public class Home_page extends AppCompatActivity {
                         Toast.makeText(Home_page.this, "Failed to check notifications: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+        //not working
+        approvedByFHRef.orderByChild("Approved_FH_email").equalTo(approverEmail)
+                .addValueEventListener(new com.google.firebase.database.ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        boolean hasUnreadNotifications = false;
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            String Pending = snapshot.child("Pending").getValue(String.class);
+                            if ("HR approval pending".equals(Pending)) {
+                                hasUnreadNotifications = true;
+                                break;
+                            }
+                        }
+                        if (notificationDot != null) {
+                            notificationDot.setVisibility(hasUnreadNotifications ? View.VISIBLE : View.GONE);
+                            setBadgeCount(1);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(com.google.firebase.database.DatabaseError databaseError) {
+                        Toast.makeText(Home_page.this, "Failed to check notifications: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    //not working
+    private void setBadgeCount(int count) {
+        boolean success = ShortcutBadger.applyCount(this, count);
+        Log.d("ShortcutBadger", "Badge updated: " + success);
     }
 }

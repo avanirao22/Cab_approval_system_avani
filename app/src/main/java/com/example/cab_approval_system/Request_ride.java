@@ -55,7 +55,6 @@ public class Request_ride extends AppCompatActivity {
     private LinearLayout passenger_layout, main_passenger_layout;
     private int passenger_count;
     Map<String, String> passengerMap = new HashMap<>();
-    private static final int CHANNEL_ID = 1001;
 
 
     @Override

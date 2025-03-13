@@ -140,45 +140,47 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
             }
         });
 
-        // Approve Button Click Listener
-        holder.approve_button.setOnClickListener(v -> {
-            Log.d("ApproveClick", "Approve button clicked for request: " + request.getRequestId());
+        if(isFHUser()) {
+            // Approve Button Click Listener
+            holder.approve_button.setOnClickListener(v -> {
+                Log.d("ApproveClick", "Approve button clicked for request: " + request.getRequestId());
 
-            // Approve the request
-            approveRequest(request, holder.statusTextView, holder.approve_button, holder.reject_button, holder.approved_display_textView, holder.reject_display_textView);
+                // Approve the request
+                approveRequest(request, holder.statusTextView, holder.approve_button, holder.reject_button, holder.approved_display_textView, holder.reject_display_textView);
 
-            // 🔹 Step 1: Fetch Employee's Approver Email from Sheet1
-            sheet1Ref.orderByChild("Official Email ID").equalTo(request.getEmpEmail()).get()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful() && task.getResult().exists()) {
-                            for (DataSnapshot snapshot : task.getResult().getChildren()) {
-                                String approverEmail = snapshot.child("Email ID of Approver").getValue(String.class);
+                // 🔹 Step 1: Fetch Employee's Approver Email from Sheet1
+                sheet1Ref.orderByChild("Official Email ID").equalTo(request.getEmpEmail()).get()
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful() && task.getResult().exists()) {
+                                for (DataSnapshot snapshot : task.getResult().getChildren()) {
+                                    //FH's email
+                                    String approverEmail = snapshot.child("Email ID of Approver").getValue(String.class);
 
-                                if (approverEmail != null) {
-                                    Log.d("Approver Email", approverEmail);
+                                    if (approverEmail != null) {
+                                        Log.d("Approver Email", approverEmail);
 
-                                    // 🔹 Step 2: Fetch the Approver's Record to Get Their Approval Matrix
-                                    sheet1Ref.orderByChild("Official Email ID").equalTo(approverEmail).get()
-                                            .addOnCompleteListener(approverTask -> {
-                                                if (approverTask.isSuccessful() && approverTask.getResult().exists()) {
-                                                    for (DataSnapshot approverSnapshot : approverTask.getResult().getChildren()) {
-                                                        String approverMatrix = approverSnapshot.child("Approval Matrix").getValue(String.class);
+                                        // 🔹 Step 2: Fetch the Approver's Record to Get Their Approval Matrix
+                                        sheet1Ref.orderByChild("Official Email ID").equalTo(approverEmail).get()
+                                                .addOnCompleteListener(approverTask -> {
+                                                    if (approverTask.isSuccessful() && approverTask.getResult().exists()) {
+                                                        for (DataSnapshot approverSnapshot : approverTask.getResult().getChildren()) {
+                                                            String HRApproverMail = approverSnapshot.child("Email ID of Approver").getValue(String.class);
 
-                                                        if (approverMatrix != null) {
-                                                            Log.d("Approver's Approval Matrix", approverMatrix);
+                                                            if (HRApproverMail != null) {
+                                                                Log.d("HR's email", HRApproverMail);
 
-                                                            // 🔹 Step 3: Only Send Notification if the Approver is FH
-                                                            if (approverMatrix.equals("FH")) {
-                                                                // 🔹 Convert email to Firebase key format (replace '.' and '@' with ',')
-                                                                String emailKey = approverEmail.replace(".", ",");
+                                                                // 🔹 Step 3: Only Send Notification if the Approver is HR
+                                                                // 🔹 Convert email to Firebase key format (replace '.' with ',')
+                                                                String HREmailKey = HRApproverMail.replace(".", ",");
 
                                                                 // 🔹 Fetch HR's FCM Token from Registration_data
                                                                 DatabaseReference tokenRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
-                                                                        .getReference("Registration_data").child(emailKey).child("fcm_token");
+                                                                        .getReference("Registration_data").child(HREmailKey).child("fcm_token");
 
                                                                 tokenRef.get().addOnCompleteListener(tokenTask -> {
                                                                     if (tokenTask.isSuccessful() && tokenTask.getResult().exists()) {
-                                                                        String hrFCMToken = tokenTask.getResult().getValue(String.class);
+                                                                        final String hrFCMToken = tokenTask.getResult().getValue(String.class);
+                                                                        Log.d("hr fcm token", hrFCMToken);
                                                                         if (hrFCMToken != null) {
                                                                             // 🔹 Prepare Notification Message
                                                                             String title = "New Approval Request";
@@ -186,7 +188,8 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
                                                                             String requestedTime = request.getTime();
 
                                                                             // 🔹 Send Notification to HR
-                                                                            FCMHelper.sendFCMNotification(context, hrFCMToken, request.getEmpEmail(), approverEmail, title, message, requestedTime);
+                                                                            Log.d("hr fcm token before sendFCMNotif", hrFCMToken);
+                                                                            FCMHelper.sendFCMNotification(context, hrFCMToken, request.getEmpEmail(), HRApproverMail, title, message, requestedTime);
                                                                         } else {
                                                                             Log.e("FCMHelper", "❌ HR FCM Token is null.");
                                                                         }
@@ -194,31 +197,86 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
                                                                         Log.e("FCMHelper", "❌ Failed to fetch HR's FCM Token.");
                                                                     }
                                                                 });
+
                                                             } else {
-                                                                Log.d("Approval Flow", "Approver is not FH, skipping notification.");
+                                                                Log.e("Firebase", "❌ Approver's Approval Matrix is null.");
                                                             }
-                                                        } else {
-                                                            Log.e("Firebase", "❌ Approver's Approval Matrix is null.");
                                                         }
+                                                    } else {
+                                                        Log.e("Firebase", "❌ No matching approver record found in Sheet1.");
                                                     }
-                                                } else {
-                                                    Log.e("Firebase", "❌ No matching approver record found in Sheet1.");
-                                                }
-                                            });
-                                } else {
-                                    Log.e("Firebase", "❌ Approver Email is null.");
+                                                });
+                                    } else {
+                                        Log.e("Firebase", "❌ Approver Email is null.");
+                                    }
                                 }
+                            } else {
+                                Log.e("Firebase", "❌ No matching employee record found in Sheet1.");
                             }
-                        } else {
-                            Log.e("Firebase", "❌ No matching employee record found in Sheet1.");
-                        }
-                    });
-        });
+                        });
+            });
+        }
+        if(isHRUser())
+        {
+            holder.approve_button.setOnClickListener(v -> {
+                Log.d("HR ApproveClick", "Approve button clicked for request: " + request.getRequestId());
 
+                // Approve the request
+                approveRequest(request, holder.statusTextView, holder.approve_button, holder.reject_button, holder.approved_display_textView, holder.reject_display_textView);
 
+                // 🔹 Step 1: Fetch Employee's Approver Email (FH's email)
+                sheet1Ref.orderByChild("Official Email ID").equalTo(request.getEmpEmail()).get()
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful() && task.getResult().exists()) {
+                                for (DataSnapshot snapshot : task.getResult().getChildren()) {
+                                    String fhEmail = snapshot.child("Email ID of Approver").getValue(String.class);
+
+                                    if (fhEmail != null) {
+                                        Log.d("FH Email", fhEmail);
+
+                                        // 🔹 Convert FH's email to Firebase key format
+                                        String fhEmailKey = fhEmail.replace(".", ",");
+
+                                        // 🔹 Fetch FH's FCM Token
+                                        DatabaseReference fhTokenRef = FirebaseDatabase.getInstance("https://cab-approval-system-default-rtdb.asia-southeast1.firebasedatabase.app")
+                                                .getReference("Registration_data").child(fhEmailKey).child("fcm_token");
+
+                                        fhTokenRef.get().addOnCompleteListener(tokenTask -> {
+                                            if (tokenTask.isSuccessful() && tokenTask.getResult().exists()) {
+                                                String fhFCMToken = tokenTask.getResult().getValue(String.class);
+                                                Log.d("FH FCM Token", fhFCMToken);
+
+                                                if (fhFCMToken != null) {
+                                                    // 🔹 Prepare Notification Message
+                                                    String title = "Cab Request Approved";
+                                                    String message = "HR has approved the cab request that you previously approved.";
+                                                    String requestedTime = request.getTime();
+
+                                                    // 🔹 Send Notification to FH
+                                                    FCMHelper.sendFCMNotification(context, fhFCMToken, request.getEmpEmail(), fhEmail, title, message, requestedTime);
+                                                } else {
+                                                    Log.e("FCMHelper", "❌ FH FCM Token is null.");
+                                                }
+                                            } else {
+                                                Log.e("FCMHelper", "❌ Failed to fetch FH's FCM Token.");
+                                            }
+                                        });
+
+                                    } else {
+                                        Log.e("Firebase", "❌ FH Email is null.");
+                                    }
+                                }
+                            } else {
+                                Log.e("Firebase", "❌ No matching employee record found in Sheet1.");
+                            }
+                        });
+            });
+
+        }
 
     }
 
+    //need to check here
     private void approveRequest(RequestModel request, TextView statusTextView, ImageButton approve_button, ImageButton reject_button, TextView approved_display_textView, TextView reject_display_textView) {
         sheet1Ref.orderByChild("Official Email ID").equalTo(approverEmail)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -437,6 +495,9 @@ public class Recycler_adapter extends RecyclerView.Adapter<Recycler_adapter.Requ
 
     private boolean isHRUser() {
         return "HR Head".equals(userRole);
+    }
+    private boolean isFHUser() {
+        return "FH".equals(userRole);
     }
 
 
